@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLICKMOJI — Pioneers of Emoji-First Journalism, Unless It Fails</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAFAF7;--tx:#1A1A1A;--mt:#6B6B6B;--bd:#D4D4D0;
+  --k:#0A0A0A;--w:#FAFAFA;
+  --accent:#2D3A2E;--accent2:#4A3728;
+  --green:#1B6B2A;--red:#9B1B1B;--gold:#8B7525;--orange:#9B5A10;
+  --ad-bg:#F5F4EE;--ticker-bg:#F0EFE9;
+  --game-bg:#F2F1EB;--game-bd:#D4D4D0;--game-tx:#1A1A1A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+
+/* ═══ MASTHEAD ═══ */
+.masthead{background:var(--bg);padding:16px 0 0}
+.masthead-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.masthead-center{text-align:center;flex:1}
+.masthead-title{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,54px);font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1}
+.masthead-motto{font-family:'Libre Baskerville',serif;font-style:italic;font-size:10px;color:var(--mt);margin-top:3px;letter-spacing:.5px}
+.masthead-side{font-size:10px;color:var(--mt);line-height:1.7;min-width:140px}
+.masthead-side.right{text-align:right}
+.masthead-side .edition{font-weight:700;color:var(--tx)}
+.masthead-rule{max-width:1100px;margin:12px auto 0;padding:0 20px}
+.masthead-rule-line{height:3px;background:var(--tx);position:relative}
+.masthead-rule-line::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--tx)}
+@media(max-width:700px){.masthead-side{display:none}}
+
+/* ═══ WEATHER ═══ */
+.weather{display:flex;align-items:center;gap:4px}
+.weather-emoji{font-size:14px}
+.weather-text{font-size:10px;color:var(--mt);line-height:1.4}
+
+/* ═══ SECTIONS NAV ═══ */
+.sections-bar{border-bottom:1px solid var(--bd);padding:8px 0;margin-top:8px}
+.sections-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;gap:0;align-items:center;justify-content:center;flex-wrap:wrap}
+.section-link{font-family:'Libre Baskerville',serif;font-size:11px;color:var(--mt);text-decoration:none;cursor:pointer;padding:2px 12px;transition:color .15s}
+.section-link:hover,.section-link.active{color:var(--tx)}
+.section-sep{color:var(--bd);font-size:11px;user-select:none}
+@media(max-width:600px){.sections-bar{display:none}}
+
+/* ═══ STOCKS TICKER ═══ */
+.ticker{overflow:hidden;background:var(--ticker-bg);border-bottom:1px solid var(--bd);font-family:'Space Mono',monospace;font-size:11px;padding:5px 0;white-space:nowrap;color:var(--tx)}
+.ticker-in{display:inline-block;animation:tick 80s linear infinite;padding-left:100%}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.tick-up{color:var(--green);font-weight:700}
+.tick-down{color:var(--red);font-weight:700}
+
+/* ═══ TOP AD ═══ */
+.top-ad-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;text-align:center;border-bottom:1px solid var(--bd)}
+.top-ad-label{font-family:'Libre Baskerville',serif;font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:8px}
+.top-ad{background:var(--ad-bg);border:1px solid var(--bd);padding:18px 24px;display:flex;align-items:center;justify-content:center;gap:20px;min-height:80px;cursor:pointer;transition:background .15s}
+.top-ad:hover{background:#EEEDEA}
+.top-ad-emoji{font-size:36px;flex-shrink:0}
+.top-ad-body{text-align:left}
+.top-ad-title{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;line-height:1.3}
+.top-ad-sub{font-size:11px;color:var(--mt);margin-top:3px;line-height:1.4}
+
+/* ═══ TWO-COLUMN LAYOUT ═══ */
+.page{max-width:1100px;margin:0 auto;padding:20px 20px 40px}
+.two-col{display:grid;grid-template-columns:1fr 220px;gap:24px}
+@media(max-width:800px){.two-col{grid-template-columns:1fr}.col-right{display:none}}
+
+/* ═══ RIGHT COLUMN ═══ */
+.col-label{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:2px solid var(--tx);padding-bottom:4px;margin-bottom:10px;color:var(--tx)}
+.col-label.mt{margin-top:18px}
+.dispatch{padding:8px 0;border-bottom:1px solid var(--bd);font-size:11px;line-height:1.4;cursor:pointer;transition:color .15s}
+.dispatch:hover{color:var(--mt)}
+.dispatch:last-child{border-bottom:none}
+.d-num{font-family:'Playfair Display',serif;font-size:16px;color:var(--mt);margin-right:6px}
+
+/* ═══ GAME CONTAINER (fixed height) ═══ */
+.game-wrap{height:640px;display:flex;flex-direction:column;overflow:hidden}
+.game-wrap>div{flex:1;overflow-y:auto}
+
+/* ═══ GAME CARD (newspaper-matched light) ═══ */
+.card{padding:24px;position:relative;overflow:hidden;background:var(--game-bg);color:var(--game-tx);border:1px solid var(--game-bd)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--bd)}
+.card.r-easy::before{background:var(--green)}
+.card.r-medium::before{background:var(--gold)}
+.card.r-hard::before{background:var(--orange)}
+.card.r-insane::before{background:var(--red)}
+
+/* ═══ IN-CARD SCORE HEADER ═══ */
+.card-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--bd)}
+.card-header-left{display:flex;gap:18px;align-items:center}
+.card-score-item{text-align:center}
+.card-score-val{font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--tx);line-height:1}
+.card-score-lbl{font-size:8px;letter-spacing:2px;color:var(--mt);text-transform:uppercase;margin-top:2px;font-family:'Space Mono',monospace}
+.card-restart{font-family:'Libre Baskerville',serif;font-size:10px;color:var(--mt);cursor:pointer;text-decoration:underline;text-decoration-color:var(--bd);text-underline-offset:2px;transition:color .15s;margin-left:4px}
+.card-restart:hover{color:var(--tx);text-decoration-color:var(--tx)}
+.training-status{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1.5px;padding:4px 10px;border:1px solid var(--bd);color:var(--mt);text-transform:uppercase;text-align:right;max-width:220px}
+.training-status.ts-easy{border-color:var(--green);color:var(--green)}
+.training-status.ts-medium{border-color:var(--gold);color:var(--gold)}
+.training-status.ts-hard{border-color:var(--orange);color:var(--orange)}
+.training-status.ts-insane{border-color:var(--red);color:var(--red)}
+
+/* ═══ START SCREEN ═══ */
+.start{text-align:center;padding:24px;background:var(--game-bg);border:1px solid var(--game-bd);position:relative;overflow:hidden}
+.start::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)}
+.start-title{font-family:'Playfair Display',serif;font-size:clamp(22px,4.5vw,32px);font-weight:900;line-height:1.15;margin-bottom:10px;color:var(--tx)}
+.start-sub{font-family:'Libre Baskerville',serif;font-size:11px;color:var(--mt);max-width:480px;margin:0 auto 18px;line-height:1.7}
+.start-sub strong{color:var(--tx)}
+
+/* ═══ EMPLOYEE BADGE ═══ */
+.badge-wrap{display:inline-block;border:2px solid var(--tx);padding:18px 28px;margin:0 0 18px;background:var(--bg);position:relative}
+.badge-wrap::before{content:'EMPLOYEE ID';position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--game-bg);padding:0 8px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--mt)}
+.badge-photo{font-size:32px;margin-bottom:6px}
+.badge-label{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:4px}
+.badge-input{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;border:none;border-bottom:2px solid var(--bd);background:transparent;text-align:center;padding:4px 8px;width:260px;color:var(--tx);outline:none;transition:border-color .2s}
+.badge-input:focus{border-bottom-color:var(--tx)}
+.badge-dept{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mt);margin-top:8px}
+.name-regen{background:none;border:1px solid var(--bd);font-family:'Space Mono',monospace;font-size:10px;color:var(--mt);cursor:pointer;padding:3px 8px;margin-top:6px;transition:all .15s;letter-spacing:1px}
+.name-regen:hover{border-color:var(--tx);color:var(--tx)}
+
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 18px;text-align:left}
+@media(max-width:540px){.how{grid-template-columns:1fr}}
+.hs{border:1px solid var(--bd);padding:12px;background:var(--bg)}
+.sn{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:rgba(0,0,0,.08);line-height:1;margin-bottom:2px}
+.st{font-size:10px;color:var(--mt);line-height:1.5}
+.st strong{color:var(--tx)}
+
+/* ═══ TIMER ═══ */
+.timer-wrap{margin-bottom:16px;display:none}
+.timer-wrap.active{display:block}
+.timer-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.timer-num{font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--gold);line-height:1;transition:color .2s}
+.timer-num.warn{color:var(--orange)}.timer-num.danger{color:var(--red);animation:blink .4s step-end infinite}
+@keyframes blink{50%{opacity:.35}}
+.timer-lbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;font-family:'Space Mono',monospace}
+.timer-track{height:3px;background:rgba(0,0,0,.06);overflow:hidden}
+.timer-bar{height:100%;width:100%;background:var(--gold);transition:width .1s linear}
+.timer-bar.warn{background:var(--orange)}.timer-bar.danger{background:var(--red)}
+
+/* ═══ QUESTION ═══ */
+.edisplay{font-size:clamp(32px,7vw,54px);letter-spacing:8px;padding:18px;text-align:center;background:var(--bg);border:1px solid var(--bd);margin-bottom:20px;word-break:break-all;animation:er .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes er{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.qprompt{font-family:'Libre Baskerville',serif;font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:14px;font-style:italic}
+
+/* Answer options */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.opts{grid-template-columns:1fr}}
+.ob{background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'Libre Baskerville',serif;font-size:12px;padding:14px 14px 14px 54px;text-align:left;cursor:pointer;transition:all .15s;line-height:1.4;position:relative}
+.ob .ol{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:15px;font-weight:700;letter-spacing:0;color:var(--tx);background:var(--bg);border:2px solid var(--bd);box-shadow:0 2px 0 var(--bd)}
+.ob:not(:disabled):hover{background:#EEEDEA;border-color:var(--tx)}
+.ob:not(:disabled):hover .ol{border-color:var(--tx);box-shadow:0 2px 0 var(--tx)}
+.ob.correct{background:#E8F5E9;border-color:var(--green);color:var(--green)}
+.ob.correct .ol{background:#E8F5E9;border-color:var(--green);color:var(--green);box-shadow:0 2px 0 var(--green)}
+.ob.wrong{background:#FDECEC;border-color:var(--red);color:var(--red)}
+.ob.wrong .ol{background:#FDECEC;border-color:var(--red);color:var(--red);box-shadow:0 2px 0 var(--red)}
+.ob:disabled{cursor:default;opacity:.5}.ob.correct,.ob.wrong{opacity:1}
+.cflash{text-align:center;padding:16px 0 6px;animation:flashPop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes flashPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.cfbig{font-family:'Playfair Display',serif;font-weight:900;font-size:36px;line-height:1;color:var(--green)}
+.cfpts{font-size:11px;color:var(--mt);letter-spacing:1px;margin-top:4px;font-family:'Space Mono',monospace}
+.kbh{text-align:center;margin-top:10px;font-size:10px;color:var(--mt);letter-spacing:1px;font-family:'Space Mono',monospace}
+@media(max-width:768px){.kbh{display:none}}
+
+/* ═══ GAME OVER ═══ */
+.gow{text-align:center;padding:24px 16px}
+.golbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.gobig{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,38px);font-weight:900;line-height:1.1;color:var(--red);margin-bottom:4px}
+.go-sub-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:11px;color:var(--mt);margin-bottom:16px;line-height:1.5;max-width:420px;margin-left:auto;margin-right:auto}
+.gorev{background:rgba(155,27,27,.04);border:1px solid rgba(155,27,27,.15);padding:14px 16px;margin:12px 0}
+.gorl{font-size:9px;letter-spacing:3px;color:var(--mt);margin-bottom:5px;font-family:'Space Mono',monospace}
+.goemoji{font-size:30px;letter-spacing:6px;margin-bottom:6px}
+.gohl{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(13px,2.5vw,16px);color:var(--tx);line-height:1.3}
+.gopw{margin-top:5px;font-size:11px;color:var(--mt);letter-spacing:.5px}
+.gopw span{color:var(--red)}
+.fsw{margin:14px 0 4px}
+.fsl{font-size:9px;letter-spacing:4px;color:var(--mt);text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:2px}
+.fsv{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(56px,14vw,90px);line-height:.9;color:var(--tx)}
+.go-round{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;margin:6px 0;color:var(--mt)}
+.verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:6px 0 3px}
+.verds{font-family:'Libre Baskerville',serif;font-style:italic;font-size:12px;color:var(--mt);margin-bottom:16px}
+
+/* ═══ BUTTONS ═══ */
+.btnp{background:var(--tx);border:none;color:var(--bg);font-family:'Playfair Display',serif;font-weight:700;letter-spacing:1px;font-size:16px;padding:14px 44px;cursor:pointer;transition:all .2s}
+.btnp:hover{background:#333;transform:scale(1.02)}
+
+/* ═══ LANGUAGE TOGGLE (masthead) ═══ */
+.lang-toggle{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px}
+.lang-option{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt);cursor:pointer;transition:color .15s;padding:2px 0}
+.lang-option:hover{color:var(--tx)}
+.lang-option.active{color:var(--tx);font-weight:700}
+.lang-sep{color:var(--bd);font-size:10px;user-select:none}
+.beta-badge{background:var(--red);color:var(--w);font-size:7px;font-weight:700;padding:2px 4px;letter-spacing:1px;font-family:'Space Mono',monospace;vertical-align:middle;margin-left:2px}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes si{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:si .3s cubic-bezier(.16,1,.3,1)}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP AD (above masthead, like real newspapers) ═══ -->
+<div class="top-ad-wrap">
+  <div class="top-ad-label">Advertisement</div>
+  <div class="top-ad" id="topAd"></div>
+</div>
+
+<!-- ═══ MASTHEAD ═══ -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-side">
+      <div id="mastheadDate"></div>
+      <div class="weather" id="weatherDisplay"><span class="weather-emoji">🌤️</span><span class="weather-text">72°F, Existential</span></div>
+    </div>
+    <div class="masthead-center">
+      <div class="lang-toggle" id="langToggle">
+        <span class="lang-option active" id="langEnglish" onclick="setLangMode('english')">English</span>
+        <span class="lang-sep">|</span>
+        <span class="lang-option" id="langEmoji" onclick="setLangMode('emoji')">Emoji <span class="beta-badge">BETA</span></span>
+      </div>
+      <div class="masthead-title">CLICKMOJI</div>
+      <div class="masthead-motto">"Pioneers of Emoji-First Journalism, Unless It Fails"</div>
+    </div>
+    <div class="masthead-side right">
+      <div class="edition">Late Edition</div>
+      <div>Vol. CXLVII &middot; &middot; &middot; No. 51,247</div>
+    </div>
+  </div>
+  <div class="masthead-rule"><div class="masthead-rule-line"></div></div>
+</header>
+
+<!-- ═══ SECTIONS NAV ═══ -->
+<nav class="sections-bar">
+  <div class="sections-inner">
+    <a class="section-link active">News</a><span class="section-sep">|</span>
+    <a class="section-link">Interdimensional Affairs</a><span class="section-sep">|</span>
+    <a class="section-link">Unsolicited Advice</a><span class="section-sep">|</span>
+    <a class="section-link">Loud Speculation</a>
+  </div>
+</nav>
+
+<!-- ═══ STOCKS TICKER ═══ -->
+<div class="ticker"><div class="ticker-in" id="tickerContent"></div></div>
+
+<!-- ═══ MAIN PAGE ═══ -->
+<div class="page">
+<div class="two-col">
+
+<!-- CENTER: GAME -->
+<main class="col-center">
+<div class="game-wrap">
+
+<!-- START SCREEN -->
+<div id="ss" class="start">
+  <div class="start-title">Welcome to the<br>Emoji Translation Desk</div>
+  <p class="start-sub">CLICKMOJI is going emoji-first. As our newest hire, your job is to prove you can <strong>match our AI's emoji translations to the correct headlines.</strong> One wrong match and you're done for the day.</p>
+  <div class="badge-wrap">
+    <div class="badge-photo" id="badgePhoto">🪪</div>
+    <div class="badge-label">Employee Name</div>
+    <input type="text" class="badge-input" id="playerName" maxlength="24" spellcheck="false">
+    <div class="badge-dept">Emoji Desk &middot; Translation Division</div>
+    <button class="name-regen" onclick="regenName()" title="Generate new name">&#x1f504; new name</button>
+  </div>
+  <div class="how">
+    <div class="hs"><div class="sn">01</div><div class="st"><strong>Review the emojis</strong><br>The AI's attempt at translating a headline.</div></div>
+    <div class="hs"><div class="sn">02</div><div class="st"><strong>Match the headline</strong><br>Four candidates. They get harder to tell apart.</div></div>
+    <div class="hs"><div class="sn">03</div><div class="st"><strong>Beat the deadline</strong><br>Timer kicks in and gets shorter each round.</div></div>
+  </div>
+  <button class="btnp" onclick="startGame()">Clock In</button>
+  <p style="margin-top:8px;font-size:9px;color:var(--mt);letter-spacing:2px;font-family:'Space Mono',monospace">ONE MISTAKE &middot; YOU'RE FIRED</p>
+  <p class="kbh" style="margin-top:5px">press enter to start</p>
+</div>
+
+<!-- GAME AREA -->
+<div id="ga" class="hidden">
+  <div class="card" id="qc">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-score-item"><div class="card-score-val" id="sc">0</div><div class="card-score-lbl">Score</div></div>
+        <div class="card-score-item"><div class="card-score-val" id="rd">1</div><div class="card-score-lbl">Round</div></div>
+        <span class="card-restart" onclick="confirmRestart()">&#8635; Start over</span>
+      </div>
+      <div class="training-status" id="trainStatus">INTERN</div>
+    </div>
+    <div class="timer-wrap" id="tw">
+      <div class="timer-row">
+        <span class="timer-lbl">DEADLINE</span>
+        <span class="timer-num" id="tn">20</span>
+      </div>
+      <div class="timer-track"><div class="timer-bar" id="tb"></div></div>
+    </div>
+    <div class="edisplay" id="ed"></div>
+    <div class="qprompt">Which headline does this emoji sequence represent?</div>
+    <div class="opts" id="op"></div>
+    <div class="kbh" id="kbhint" style="margin-top:8px">press or click 1&ndash;4 to answer</div>
+    <div class="cflash hidden" id="cf"><div class="cfbig">&#10003; MATCH CONFIRMED</div><div class="cfpts" id="cp"></div></div>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div id="go" class="hidden">
+  <div class="card gow">
+    <div class="golbl" id="goLabel">&mdash; CORRECTION &mdash;</div>
+    <div class="gobig" id="goBig">We Regret the Error</div>
+    <div class="go-sub-text" id="goSub"></div>
+    <div class="gorev">
+      <div class="gorl">THE AI TRANSLATED&hellip;</div>
+      <div class="goemoji" id="ge"></div>
+      <div class="gohl" id="gh"></div>
+      <div class="gopw">you matched: <span id="gp"></span></div>
+    </div>
+    <div class="fsw"><div class="fsl" id="goRoundLabel">Reached Round 1</div><div class="fsv" id="gsc">1</div></div>
+    <div class="verd" id="gv"></div>
+    <div class="verds" id="gvs"></div>
+    <button class="btnp" onclick="resetGame()">Clock Back In</button>
+    <div class="kbh" style="margin-top:6px">press enter to retry</div>
+  </div>
+</div>
+
+</div><!-- /game-wrap -->
+</main>
+
+<!-- RIGHT COLUMN -->
+<aside class="col-right">
+  <div class="col-label">Most Read</div>
+  <div id="trending"></div>
+</aside>
+
+</div><!-- /two-col -->
+</div><!-- /page -->
+
+<script>
+/* ─── CONTENT LIBRARY ─── */
+const CL=[
+  [{h:"I Quit My Job To Become A Dog Influencer And Now I Have No Friends",e:["🐕","📸","👔","💔","😞"]},{h:"I Let My Cat Make All My Financial Decisions For A Year And We Lost Everything",e:["🐱","💰","📉","😰","💀"]},{h:"I Only Communicated In Emojis For A Week And My Therapist Quit",e:["💬","😶","📅","👩‍⚕️","🚪"]},{h:"I Spent A Year Saying Yes To Everything And Now I Own Three Timeshares",e:["✅","📅","😬","🏖️","💸"]},{h:"I Tried Living Like A Victorian For A Month And I Have Rickets Now",e:["🎩","📅","🕯️","🦴","😩"]},{h:"I Gave Up Electricity For 30 Days And My Family Has Filed For Divorce",e:["⚡","❌","📅","👨‍👩‍👧","⚖️"]}],
+  [{h:"27 Signs You're Definitely A Millennial And You're Probably Crying About It",e:["📱","☕","💀","💸","😭"]},{h:"Gen Z Is Killing The Napkin Industry And Honestly Boomers Have A Point",e:["🧻","📉","👴","😤","✅"]},{h:"Millennials Are Finally Buying Houses And Somehow This Is Also Bad News",e:["🏠","😬","💸","📰","😭"]},{h:"Boomers Discover Streaming Services And Declare Television Ruined Forever",e:["📺","👴","😡","💀","🎬"]},{h:"Gen Z Refuses To Use Email And Now The Entire Economy Is Collapsing",e:["📧","❌","📉","💀","🤷"]},{h:"Millennials Are Raising Plants Instead Of Children And Scientists Are Worried",e:["🪴","👶","❌","🔬","😟"]}],
+  [{h:"The Government Has Been Lying About How Many Holes Are In A Cracker",e:["🫙","🏛️","🕵️","🤯","🔍"]},{h:"Scientists Confirm Your Coworker Who Microwaves Fish Is Actually A Sociopath",e:["🐟","🔬","🏢","😈","⚗️"]},{h:"Apparently You've Been Breathing Wrong Your Entire Life And We're Sorry",e:["💨","😲","😔","📋","❌"]},{h:"Doctors Reveal The One Food That Is Somehow Both Killing You And Saving You",e:["🍎","👨‍⚕️","💀","✅","😵"]},{h:"New Study Finds Everything You Loved In The 90s Causes Cancer",e:["🔬","📊","💀","📼","😱"]},{h:"Experts Confirm Your Posture Right Now Is Already Destroying Your Spine",e:["💻","🪑","😬","🦴","💥"]}],
+  [{h:"10 Airbnbs So Remote You Will Almost Certainly Be Murdered There",e:["🏡","🌲","🗺️","🔪","😬"]},{h:"This Couple Quit Everything To Live In A Van And Now They Both Miss Toilets",e:["🚐","💑","🌅","🚽","😩"]},{h:"We Ranked Every Country By How Quickly You Would Die There Without Wi-Fi",e:["🌍","📶","❌","⏳","💀"]},{h:"This $19 Flight Has Seven Layovers And One Of The Airports Is A Field",e:["✈️","💸","🔄","🌾","😬"]},{h:"Digital Nomad Discovers That Working From Bali Is Just Working But Hotter",e:["💻","🌴","😰","☀️","😒"]},{h:"Woman Moves To Italian Village For $1 And Spends $200,000 On Structural Issues",e:["🏚️","🇮🇹","💵","🔨","😭"]}],
+  [{h:"My Husband Left Me For Someone He Met At A Bread-Making Class And I'm Not Even Mad",e:["🍞","💑","💔","😐","🤷"]},{h:"We Asked 1000 People If They Actually Like Their Partners And The Results Are Grim",e:["💑","📊","😬","❓","😶"]},{h:"This Dating App Matched Me With My Own Father And Other Horror Stories",e:["📱","❤️","👨","😱","🤖"]},{h:"I Planned The Perfect Proposal And She Said She Needed To Think About It",e:["💍","😬","🙏","⏳","😰"]},{h:"Man Proposes At His Ex's Wedding And Claims It Was A Coincidence",e:["💍","💒","😤","🤥","👀"]},{h:"Couple Survives 30 Days In The Wilderness And Breaks Up In The Parking Lot After",e:["🌲","💑","✅","🚗","💔"]}],
+  [{h:"Apparently You've Been Eating Spaghetti Wrong Your Entire Life And We're Sorry",e:["🍝","❌","😲","😔","🤌"]},{h:"This Restaurant Charges $400 For A Sandwich And Has A Three Year Wait List",e:["🥪","💸","⏳","📋","😤"]},{h:"The Internet Cannot Decide Whether This Meal Is Breakfast Or A Cry For Help",e:["🍳","❓","🌐","😬","🆘"]},{h:"Gordon Ramsay Tries A Hot Dog And Has To Go Lie Down For Several Hours",e:["🌭","😵","👨‍🍳","🛏️","⏳"]},{h:"This Town Smells Exactly Like Cinnamon Toast Crunch And Nobody Knows Why",e:["🏙️","👃","🥣","❓","🤷"]},{h:"We Tried The $1 Pizza Versus The $1000 Pizza And The $1 Was Fine",e:["🍕","💵","💎","😐","🤷"]}],
+  [{h:"We Ranked Every Taylor Swift Album And Yes We Will Be Accepting Lawsuits",e:["🎵","📊","👑","⚖️","😤"]},{h:"This Quiz Will Tell You Which Disney Princess You Are Based On Your Pasta Order",e:["🍝","👸","❓","✨","🔮"]},{h:"Someone Calculated How Much Money Squid Game Contestants Made Per Hour",e:["🦑","💰","🧮","😬","⏱️"]},{h:"We Watched All 847 Episodes Of Grey's Anatomy In One Week For Your Benefit",e:["📺","🏥","📅","💀","🫡"]},{h:"Celebrity Spotted Looking Completely Normal And The Nation Is Unsettled",e:["⭐","😐","📸","😱","🏙️"]},{h:"New Netflix Show Has 97 Percent Rating But Everyone Who Watched It Is Fine",e:["📺","🌟","😐","✅","🤷"]}],
+  [{h:"I Quit My Corporate Job To Sell Candles And Now I Work 90 Hours A Week",e:["🕯️","💼","😮‍💨","⏰","💀"]},{h:"This CEO Wakes Up At 3am Every Day And Is Deeply Unpleasant To Be Around",e:["⏰","👔","😤","☕","💀"]},{h:"LinkedIn Influencer Explains Why Suffering Builds Character And Gets 40,000 Likes",e:["💼","😢","✅","👍","🤔"]},{h:"Man Turns Passion Into Career And Reports That Passion Is Now Destroyed",e:["❤️","💼","💔","📉","😶"]},{h:"New Study Finds Open Plan Offices Cause The Same Stress As Active Combat",e:["🏢","😤","🪖","📊","💥"]},{h:"Tech Startup Offers Unlimited Vacation And Zero Employees Have Taken Any",e:["🏖️","✅","💼","📊","0️⃣"]}],
+];
+const ALL=CL.flat();
+
+/* ─── FAKE ADS (prestige/classified parody) ─── */
+const ADS=[
+  {cat:"ADVERTISEMENT",t:"Artisanal Silence — Now Available in Jars",sub:"Hand-harvested from a monastery in Provence. $340/oz. Free shipping over $2,000.",em:"🤫🏺"},
+  {cat:"ADVERTISEMENT",t:"Bespoke Anxiety, Tailored to You",sub:"Why settle for generic dread? Our master craftsmen create worry unique to your circumstances. Est. 1847.",em:"🧵😰"},
+  {cat:"ADVERTISEMENT",t:"The Helvetica Wristwatch",sub:"It doesn't tell time. It implies it. Starting at $12,400.",em:"⌚✨"},
+  {cat:"ADVERTISEMENT",t:"Premium Hand-Sorted Oxygen",sub:"Each molecule individually inspected. \"Breathing has never felt so intentional.\" — subscriber",em:"💨🔬"},
+  {cat:"CLASSIFIEDS",t:"SEEKING: One (1) Sense of Purpose",sub:"Condition: new or gently used. Previous owner pivoted to crypto. Will pay up to $12.99.",em:"🧠💸"},
+  {cat:"CLASSIFIEDS",t:"FOR SALE: Antique Attention Span (c. 2005)",sub:"Capable of reading an entire article without checking phone. Collector's item. $8,400 OBO.",em:"🧠⏱️"},
+  {cat:"ADVERTISEMENT",t:"Estate-Bottled Disappointment",sub:"Notes of overtime, cold coffee, and unreturned calls. 94 points — Wine Spectator.",em:"🍷😩"},
+  {cat:"REAL ESTATE",t:"LUXURY 1BR — $4,200/mo",sub:"Charming 340 sq ft. Exposed everything. \"Character.\" Doorman judges you silently. No pets, no cooking, no joy.",em:"🏢🔑"},
+  {cat:"ADVERTISEMENT",t:"The Ottolenghi Doorstop",sub:"A cookbook so beautiful you will never open it. Display edition. Gilt edges. $85.",em:"📖✨"},
+  {cat:"CLASSIFIEDS",t:"LOST: All Momentum (vicinity of Tuesday)",sub:"Last seen during a 3pm meeting. No distinguishing features. Reward: the rest of the week off.",em:"📋😶"},
+  {cat:"ADVERTISEMENT",t:"Noise-Canceling Headphones for Your Thoughts",sub:"Finally. ANC technology that blocks your own internal monologue. FDA pending.",em:"🎧🧠"},
+  {cat:"ADVERTISEMENT",t:"Subscribe to Our Newsletter",sub:"We will email you every single day until one of us perishes. Unsubscribe link rendered in 4pt font.",em:"📧♾️"},
+  {cat:"REAL ESTATE",t:"COUNTRY ESTATE — $2.1M",sub:"12 acres. Built 1803. Ghosts included at no additional charge. \"They're mostly in the east wing.\"",em:"🏚️👻"},
+  {cat:"CLASSIFIEDS",t:"FREE: Partially Used New Year's Resolutions",sub:"Includes gym membership (unused since Jan 4), meditation app, and a journal with one entry.",em:"📓🏋️"},
+  {cat:"ADVERTISEMENT",t:"Grandma's Recipe for Success",sub:"Ingredients: guilt, passive aggression, casserole. Serves: the entire extended family whether they like it or not.",em:"👵🍲"},
+];
+
+const TREND_ITEMS=[
+  "Area Man Achieves Inbox Zero by Deleting Everything, Declares Victory",
+  "Study: People Who Wake at 5 A.M. Just as Miserable, but More Vocal About It",
+  "Person Who Said 'Let's Circle Back' Has Never Circled Back to Anything",
+  "'I'll Start Monday' Exposed as Longest-Running Lie in Human History",
+  "Couple Agrees to 'Just One Episode' for 947th Consecutive Night",
+  "Report: 98% of 'Quick Questions' Are Neither Quick Nor Singular",
+  "Local Man's '5-Minute' Recipe Enters Hour Three Without Apparent Irony",
+  "Nation's Therapists Report Surge in Clients Who 'Just Want to Vent'",
+  "Woman Discovers She's Been Using Dishwasher Wrong for 30 Years, Still Doesn't Care",
+  "\"I'm Not a Regular Boss, I'm a Cool Boss,\" Reports Universally Disliked Boss",
+];
+
+const STOCKS=[
+  {sym:"EMOJI",pct:"+2.4",up:true},{sym:"ATTN",pct:"-8.1",up:false},
+  {sym:"CLKBT",pct:"+14.7",up:true},{sym:"NUANC",pct:"-99.2",up:false},
+  {sym:"DSCRL",pct:"+6.8",up:true},{sym:"FOMO",pct:"+22.1",up:true},
+  {sym:"FACTS",pct:"-4.3",up:false},{sym:"VIBES",pct:"+11.9",up:true},
+  {sym:"OUTRG",pct:"+31.0",up:true},{sym:"CNTXT",pct:"-67.5",up:false},
+  {sym:"IRONY",pct:"-12.3",up:false},{sym:"TAKES",pct:"+8.4",up:true},
+];
+
+/* ─── FAKE EMPLOYEE NAMES ─── */
+const FAKE_NAMES=[
+  "Brenda Clicksworth","Dale Headliner","Fontaine von Pixel",
+  "Gary Bandwidth","Judith Scrollington","Mortimer Trendpiece",
+  "Sheila Deadline","Reginald Uppercase","Tamsin Breakingnews",
+  "Chester Pagination","Eunice Hyperlink","Barnaby Pushnotify",
+  "Dolores Paywall","Franklin Sidebar","Mildred Crosspost",
+  "Cornelius Dateline","Agatha Clickbait","Winston Newsfeed",
+  "Beatrice Infographic","Harold Retraction"
+];
+
+/* ─── FAKE WEATHER ─── */
+const FAKE_WEATHER=[
+  {emoji:"🌤️",text:"72°F, Existential"},
+  {emoji:"🌧️",text:"58°F, Passive-Aggressive Drizzle"},
+  {emoji:"⛈️",text:"61°F, Ominous"},
+  {emoji:"🌫️",text:"54°F, Vibes Unknown"},
+  {emoji:"☀️",text:"88°F, Aggressively Sunny"},
+  {emoji:"🌪️",text:"??°F, Spiral Energy"},
+  {emoji:"❄️",text:"12°F, Emotionally Unavailable"},
+  {emoji:"🌈",text:"70°F, Suspiciously Pleasant"},
+  {emoji:"🔥",text:"104°F, Alarming"},
+  {emoji:"🌊",text:"65°F, Damp With Regret"},
+];
+
+/* ─── GAME OVER HEADLINES (use playerDisplayName) ─── */
+let playerDisplayName='Employee #2,026';
+
+const GAME_OVER_HEADLINES=[
+  {label:"— CORRECTION —",big:"We Regret the Error",sub:()=>`An earlier version of this training session contained an employee (${playerDisplayName}) who knew what they were doing. This has been corrected.`},
+  {label:"INTERNAL MEMO",big:()=>`${playerDisplayName}: Terminated`,sub:()=>`HR confirms ${playerDisplayName} failed to meet minimum emoji literacy requirements. Personal effects can be collected from the lobby.`},
+  {label:"— RETRACTION —",big:"Translation Quality Below Standards",sub:()=>`The Editors regret to inform ${playerDisplayName} that their performance review has been updated accordingly.`},
+  {label:"LATE BULLETIN",big:"AI Outperforms Human Trainee",sub:()=>`Officials report the translation AI has formally requested a more competent supervisor than ${playerDisplayName}.`},
+  {label:"SPECIAL REPORT",big:"Training Session Ends Early",sub:()=>`A promising calibration attempt by ${playerDisplayName} ended prematurely today, leaving the Emoji Desk short-staffed once again.`},
+];
+
+/* ─── STATE ─── */
+let S={score:0,streak:0,best:0,q:0,used:[],hist:[],cur:null,timeLeft:0};
+let tmr=null,autoTimer=null,canSkipAt=0;
+
+/* ─── DIFFICULTY ─── */
+function getSC(q){if(q<=2)return 0;if(q===3)return 1;if(q===4)return 2;return 3;}
+function getTL(q){if(q<=4)return 0;if(q===5)return 20;if(q===6)return 16;if(q===7)return 13;if(q===8)return 11;if(q===9)return 9;return 8;}
+function getRL(q){if(q<=2)return'INTERN';if(q<=4)return'JUNIOR ASSOCIATE';if(q<=6)return'MID-LEVEL TRANSLATOR';if(q<=8)return'SENIOR EMOJI CORRESPONDENT';if(q<=10)return'VP OF TRANSLATION';return'CHIEF EMOJI OFFICER';}
+function getRLC(q){if(q<=2)return'var(--green)';if(q<=4)return'var(--gold)';if(q<=6)return'var(--orange)';return'var(--red)';}
+function getCardClass(q){if(q<=2)return'r-easy';if(q<=4)return'r-medium';if(q<=6)return'r-hard';return'r-insane';}
+function getTrainClass(q){if(q<=2)return'ts-easy';if(q<=4)return'ts-medium';if(q<=6)return'ts-hard';return'ts-insane';}
+
+/* ─── QUESTION GENERATION ─── */
+function pick(){
+  let av=ALL.filter(x=>!S.used.includes(x.h));
+  if(av.length<4){S.used=[];av=ALL;}
+  const cor=av[Math.floor(Math.random()*av.length)];
+  S.used.push(cor.h);
+  const corCat=CL.find(c=>c.some(x=>x.h===cor.h));
+  const sc=getSC(S.q+1);
+  const same=corCat.filter(x=>x.h!==cor.h).sort(()=>Math.random()-.5);
+  const diff=ALL.filter(x=>x.h!==cor.h&&!corCat.includes(x)).sort(()=>Math.random()-.5);
+  let dis=[...same.slice(0,sc)];
+  dis.push(...diff.slice(0,3-dis.length));
+  if(dis.length<3){const ex=ALL.filter(x=>x.h!==cor.h&&!dis.some(d=>d.h===x.h)).sort(()=>Math.random()-.5);dis=[...dis,...ex].slice(0,3);}
+  return{cor,opts:[cor,...dis].sort(()=>Math.random()-.5)};
+}
+
+/* ─── TIMER ─── */
+function startTimer(){
+  const tl=getTL(S.q+1);
+  const tw=document.getElementById('tw');
+  if(tl===0){tw.classList.remove('active');return;}
+  tw.classList.add('active');
+  S.timeLeft=tl;
+  const tn=document.getElementById('tn'),tb=document.getElementById('tb');
+  tn.textContent=tl;tn.className='timer-num';tb.style.width='100%';tb.className='timer-bar';
+  tmr=setInterval(()=>{
+    S.timeLeft-=0.1;
+    if(S.timeLeft<=0){clearInterval(tmr);tmr=null;timeUp();return;}
+    const pct=(S.timeLeft/tl)*100;
+    tn.textContent=Math.ceil(S.timeLeft);
+    tb.style.width=pct+'%';
+    if(pct<25){tb.className='timer-bar danger';tn.className='timer-num danger';}
+    else if(pct<50){tb.className='timer-bar warn';tn.className='timer-num warn';}
+  },100);
+}
+function stopTimer(){if(tmr){clearInterval(tmr);tmr=null;}}
+function timeUp(){
+  document.querySelectorAll('.ob').forEach(b=>{b.disabled=true;if(b.dataset.h===S.cur.h)b.classList.add('correct');});
+  S.hist.push({h:S.cur.h,e:S.cur.e.join(' '),ok:false,picked:"⏱️ DEADLINE MISSED"});
+  S.q++;
+  setTimeout(()=>gameOver("⏱️ DEADLINE MISSED",S.cur.h),700);
+}
+
+/* ─── RENDER QUESTION ─── */
+function rq(){
+  const{cor,opts}=pick();
+  S.cur=cor;
+  const qn=S.q+1;
+  document.getElementById('rd').textContent=qn;
+
+  /* training status badge */
+  const ts=document.getElementById('trainStatus');
+  ts.textContent=getRL(qn);
+  ts.className='training-status '+getTrainClass(qn);
+
+  const ed=document.getElementById('ed');
+  ed.style.animation='none';ed.offsetHeight;ed.style.animation='';
+  ed.textContent=cor.e.join(' ');
+  const op=document.getElementById('op');op.innerHTML='';
+  ['1','2','3','4'].forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.className='ob';b.dataset.h=opts[i].h;
+    b.innerHTML=`<span class="ol">${l}</span>${opts[i].h}`;
+    b.onclick=()=>ans(opts[i].h,cor.h);
+    op.appendChild(b);
+  });
+  document.getElementById('cf').classList.add('hidden');
+  document.getElementById('kbhint').classList.remove('hidden');
+  const qc=document.getElementById('qc');
+  qc.className='card '+getCardClass(qn);
+  qc.style.animation='none';qc.offsetHeight;qc.style.animation='';
+  bar();startTimer();refreshAds();
+}
+
+/* ─── ANSWER ─── */
+function ans(ch,cor){
+  stopTimer();
+  if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}
+  document.querySelectorAll('.ob').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.h===cor)b.classList.add('correct');
+    else if(b.dataset.h===ch&&ch!==cor)b.classList.add('wrong');
+    else b.style.opacity='.35';
+  });
+  document.getElementById('kbhint').classList.add('hidden');
+  const ok=ch===cor;
+  S.hist.push({h:cor,e:S.cur.e.join(' '),ok,picked:ch});
+  S.q++;
+  if(ok){
+    S.streak++;S.best=Math.max(S.best,S.streak);
+    const pts=100+(S.streak-1)*50;S.score+=pts;
+    document.getElementById('cf').classList.remove('hidden');
+    document.getElementById('cp').textContent=`+${pts} PTS`;
+    bar();
+    canSkipAt=Date.now()+350;
+    autoTimer=setTimeout(nextQ,1200);
+  }else{
+    bar();
+    setTimeout(()=>gameOver(ch,cor),800);
+  }
+}
+function nextQ(){autoTimer=null;rq();}
+
+/* ─── SCOREBAR (simplified — score + round only) ─── */
+function bar(){
+  document.getElementById('sc').textContent=S.score;
+  document.getElementById('rd').textContent=S.q+1>S.q?S.q+1:S.q;
+}
+
+/* ─── GAME OVER ─── */
+function gameOver(ch,cor){
+  stopTimer();if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}
+  document.getElementById('ga').classList.add('hidden');
+  document.getElementById('go').classList.remove('hidden');
+  scrollGameTop();
+  const goH=GAME_OVER_HEADLINES[Math.floor(Math.random()*GAME_OVER_HEADLINES.length)];
+  document.getElementById('goLabel').textContent=goH.label;
+  document.getElementById('goBig').textContent=typeof goH.big==='function'?goH.big():goH.big;
+  document.getElementById('goSub').textContent=typeof goH.sub==='function'?goH.sub():goH.sub;
+  document.getElementById('ge').textContent=S.cur.e.join(' ');
+  document.getElementById('gh').textContent=cor;
+  document.getElementById('gp').textContent=ch;
+  document.getElementById('goRoundLabel').textContent=`Reached Round ${S.q} · ${getRL(S.q)}`;
+  document.getElementById('gsc').textContent=S.q;
+  const vs=[
+    {m:15,t:"SENIOR CORRESPONDENT",s:"The AI has requested you personally for all future training sessions."},
+    {m:10,t:"STAFF WRITER",s:"HR has noted your emoji literacy as 'disturbingly high.'"},
+    {m:6,t:"DESK ASSOCIATE",s:"You read more than the headline. Management finds this suspicious."},
+    {m:3,t:"INTERN",s:"The emojis were confusing. We'll allow it. This time."},
+    {m:1,t:"TEMP",s:"A coin flip would've gotten further. We checked."},
+    {m:0,t:"ESCORTED OUT",s:"Security has been notified."},
+  ];
+  const v=vs.find(v=>S.best>=v.m)||vs[vs.length-1];
+  document.getElementById('gv').textContent=v.t;
+  document.getElementById('gvs').textContent=v.s;
+}
+
+/* ─── SCROLL GAME TOP ─── */
+function scrollGameTop(){
+  document.querySelectorAll('.game-wrap > div').forEach(d=>d.scrollTop=0);
+}
+
+/* ─── START / RESET / RESTART ─── */
+function startGame(){
+  const input=document.getElementById('playerName');
+  playerDisplayName=input.value.trim()||FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+  document.getElementById('ss').classList.add('hidden');
+  document.getElementById('ga').classList.remove('hidden');
+  scrollGameTop();
+  bar();rq();
+}
+function resetGame(){
+  const best=S.best;
+  S={score:0,streak:0,best,q:0,used:[],hist:[],cur:null,timeLeft:0};
+  document.getElementById('go').classList.add('hidden');
+  document.getElementById('ga').classList.remove('hidden');
+  scrollGameTop();
+  bar();rq();
+}
+function confirmRestart(){
+  stopTimer();if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}
+  const best=S.best;
+  S={score:0,streak:0,best,q:0,used:[],hist:[],cur:null,timeLeft:0};
+  scrollGameTop();
+  bar();rq();
+}
+
+/* ─── ADS & COLUMNS ─── */
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+
+function renderTopAd(el,ad){
+  el.innerHTML=`<span class="top-ad-emoji">${ad.em}</span><div class="top-ad-body"><div class="top-ad-title">${ad.t}</div><div class="top-ad-sub">${ad.sub}</div></div>`;
+}
+
+function refreshAds(){
+  const ads=shuffle(ADS);
+  renderTopAd(document.getElementById('topAd'),ads[0]);
+  if(emojiMode) applyEmojiToAd();
+}
+
+function initColumns(){
+  const items=shuffle(TREND_ITEMS).slice(0,6);
+  document.getElementById('trending').innerHTML=items.map((t,i)=>`<div class="dispatch"><span class="d-num">${i+1}</span>${t}</div>`).join('');
+}
+
+/* ─── STOCKS TICKER ─── */
+function initTicker(){
+  const parts=STOCKS.map(s=>{
+    const cls=s.up?'tick-up':'tick-down';
+    const arrow=s.up?'▲':'▼';
+    return `<span class="${cls}">${s.sym} ${arrow}${s.pct}%</span>`;
+  });
+  document.getElementById('tickerContent').innerHTML=parts.join(' &nbsp;&middot;&nbsp; ')+' &nbsp;&middot;&nbsp; '+parts.join(' &nbsp;&middot;&nbsp; ');
+}
+
+/* ─── MASTHEAD DATE ─── */
+function initMasthead(){
+  const d=new Date();
+  const opts={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('mastheadDate').textContent=d.toLocaleDateString('en-US',opts);
+}
+
+/* ─── WEATHER ─── */
+function initWeather(){
+  const w=FAKE_WEATHER[Math.floor(Math.random()*FAKE_WEATHER.length)];
+  const el=document.getElementById('weatherDisplay');
+  el.innerHTML=`<span class="weather-emoji">${w.emoji}</span><span class="weather-text">${w.text}</span>`;
+}
+
+/* ─── EMPLOYEE BADGE ─── */
+function initBadge(){
+  const name=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+  document.getElementById('playerName').value=name;
+}
+function regenName(){
+  const input=document.getElementById('playerName');
+  let name=input.value;
+  let attempt=0;
+  while(attempt<20){
+    const pick=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+    if(pick!==name){name=pick;break;}
+    attempt++;
+  }
+  input.value=name;
+  input.focus();input.select();
+}
+
+/* ─── EMOJI TOGGLE ─── */
+let emojiMode=false;
+
+const EMOJI_NAV={
+  "News":"📰","Interdimensional Affairs":"🌀👽",
+  "Unsolicited Advice":"☝️🙄","Loud Speculation":"📢🔮"
+};
+
+const EMOJI_STOCKS={
+  EMOJI:'😀',ATTN:'👀',CLKBT:'👆',NUANC:'🤷',DSCRL:'📜',FOMO:'😰',
+  FACTS:'📋',VIBES:'✨',OUTRG:'😤',CNTXT:'🧩',IRONY:'🙃',TAKES:'🔥'
+};
+
+function setLangMode(mode){
+  const en=document.getElementById('langEnglish');
+  const em=document.getElementById('langEmoji');
+  if(mode==='emoji'&&!emojiMode){
+    emojiMode=true;
+    en.classList.remove('active');em.classList.add('active');
+    applyEmojiMode();
+  }else if(mode==='english'&&emojiMode){
+    emojiMode=false;
+    em.classList.remove('active');en.classList.add('active');
+    restoreTextMode();
+  }
+}
+
+function storeOrig(el,useHTML){
+  if(!el||el.dataset.orig)return;
+  el.dataset.orig=useHTML?el.innerHTML:el.textContent;
+}
+
+function applyEmojiMode(){
+  /* masthead title */
+  const title=document.querySelector('.masthead-title');
+  storeOrig(title,false);
+  title.textContent='👆😀📰';
+
+  /* motto */
+  const motto=document.querySelector('.masthead-motto');
+  storeOrig(motto,false);
+  motto.textContent='"🏆👆😀📰, 🚫➡️💀"';
+
+  /* date */
+  const dateEl=document.getElementById('mastheadDate');
+  storeOrig(dateEl,false);
+  dateEl.textContent='📅☀️🗓️';
+
+  /* nav links */
+  document.querySelectorAll('.section-link').forEach(link=>{
+    storeOrig(link,false);
+    link.textContent=EMOJI_NAV[link.dataset.orig]||'❓';
+  });
+
+  /* dispatches */
+  const dispatchEmojis=['📰','🔥','💀','😬','👀','🤔','📊','⚡','🌍','💸','😱','🤯'];
+  document.querySelectorAll('.dispatch').forEach(d=>{
+    storeOrig(d,true);
+    const num=d.querySelector('.d-num');
+    const numText=num?num.textContent:'';
+    const count=Math.floor(Math.random()*3)+3;
+    const result=Array.from({length:count},()=>dispatchEmojis[Math.floor(Math.random()*dispatchEmojis.length)]).join('');
+    d.innerHTML=`<span class="d-num">${numText}</span>${result}`;
+  });
+
+  /* weather */
+  const weather=document.getElementById('weatherDisplay');
+  storeOrig(weather,true);
+  weather.innerHTML='<span class="weather-emoji">🌡️</span><span class="weather-text">🔥❄️🤷</span>';
+
+  /* edition */
+  const editionEl=document.querySelector('.masthead-side.right .edition');
+  if(editionEl){storeOrig(editionEl,false);editionEl.textContent='🌙📰';}
+  const volEl=document.querySelector('.masthead-side.right div:last-child');
+  if(volEl&&volEl!==editionEl){storeOrig(volEl,false);volEl.textContent='📚 · · · 📄';}
+
+  /* top ad */
+  applyEmojiToAd();
+
+  /* ticker */
+  const ticker=document.getElementById('tickerContent');
+  storeOrig(ticker,true);
+  ticker.innerHTML=ticker.innerHTML.replace(/\b([A-Z]{3,})\b/g,(match)=>EMOJI_STOCKS[match]||match);
+
+  /* col label */
+  const colLabel=document.querySelector('.col-label');
+  if(colLabel){storeOrig(colLabel,false);colLabel.textContent='🔥📖👀';}
+}
+
+function applyEmojiToAd(){
+  const topAd=document.getElementById('topAd');
+  const adTitle=topAd.querySelector('.top-ad-title');
+  const adSub=topAd.querySelector('.top-ad-sub');
+  if(adTitle){adTitle.dataset.orig=adTitle.textContent;adTitle.textContent='🛒✨💰🔥';}
+  if(adSub){adSub.dataset.orig=adSub.textContent;adSub.textContent='👆👆👆 💵➡️😊';}
+}
+
+function restoreTextMode(){
+  document.querySelectorAll('[data-orig]').forEach(el=>{
+    if(el.dataset.origIsHtml||el.children.length>0||el.innerHTML!==el.textContent){
+      el.innerHTML=el.dataset.orig;
+    }else{
+      el.textContent=el.dataset.orig;
+    }
+    delete el.dataset.orig;
+  });
+  /* reinit ticker since innerHTML was replaced */
+  initTicker();
+}
+
+/* ─── KEYBOARD ─── */
+document.addEventListener('keydown',(e)=>{
+  /* don't capture keys when typing in input */
+  if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
+
+  if(autoTimer&&Date.now()>=canSkipAt){
+    clearTimeout(autoTimer);autoTimer=null;nextQ();return;
+  }
+  const idx=['1','2','3','4'].indexOf(e.key);
+  if(idx>=0){
+    const btns=document.querySelectorAll('.ob:not(:disabled)');
+    if(btns[idx])btns[idx].click();
+    return;
+  }
+  if(e.key==='Enter'&&!autoTimer){
+    e.preventDefault();
+    if(!document.getElementById('ss').classList.contains('hidden')){startGame();return;}
+    if(!document.getElementById('go').classList.contains('hidden')){resetGame();return;}
+  }
+});
+
+/* ─── INIT ─── */
+initMasthead();
+initWeather();
+initTicker();
+refreshAds();
+initColumns();
+initBadge();
+</script>
+</body>
+</html>
