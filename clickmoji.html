@@ -22,7 +22,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .masthead{background:var(--bg);padding:16px 0 0}
 .masthead-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
 .masthead-center{text-align:center;flex:1}
-.masthead-title{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,54px);font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1;margin-bottom:6px}
+.masthead-title{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,54px);font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1;margin-bottom:14px}
 .masthead-motto{font-family:'Libre Baskerville',serif;font-style:italic;font-size:10px;color:var(--mt);margin-top:3px;letter-spacing:.5px}
 .masthead-side{font-size:10px;color:var(--mt);line-height:1.7;min-width:140px}
 .masthead-side.right{text-align:right}
@@ -46,16 +46,17 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 @media(max-width:600px){.sections-bar{display:none}}
 
 /* ═══ STOCKS TICKER ═══ */
-.ticker{overflow:hidden;font-family:'Space Mono',monospace;font-size:11px;padding:8px 20px;white-space:nowrap;color:var(--tx);max-width:1100px;margin:0 auto;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.ticker-wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.ticker{overflow:hidden;font-family:'Space Mono',monospace;font-size:11px;padding:8px 0;white-space:nowrap;color:var(--tx);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .ticker-in{display:inline-block;animation:tick 80s linear infinite;padding-left:100%}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 .tick-up{color:var(--green);font-weight:700}
 .tick-down{color:var(--red);font-weight:700}
 
 /* ═══ TOP AD ═══ */
-.top-ad-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;text-align:center;border-bottom:1px solid var(--bd)}
+.top-ad-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;text-align:center}
 .top-ad-label{font-family:'Libre Baskerville',serif;font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:8px}
-.top-ad{background:var(--ad-bg);border:1px solid var(--bd);padding:18px 24px;display:flex;align-items:center;gap:20px;min-height:80px}
+.top-ad{background:none;border:1px solid var(--bd);padding:18px 24px;display:flex;align-items:center;gap:20px;min-height:80px}
 .top-ad-emoji{font-size:36px;flex-shrink:0}
 .top-ad-body{text-align:left;flex:1}
 .top-ad-title{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;line-height:1.3}
@@ -162,7 +163,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .gopw span{color:var(--red)}
 .fsw{margin:14px 0 8px}
 .fsv{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(56px,14vw,90px);line-height:.9;color:var(--tx)}
-.fslbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-top:4px;font-family:'Space Mono',monospace}
+.fslbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:6px;font-family:'Space Mono',monospace}
 .verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:10px 0 16px}
 
 /* ═══ BUTTONS ═══ */
@@ -182,7 +183,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .card{animation:si .3s cubic-bezier(.16,1,.3,1)}
 
 /* ═══ CONFETTI ═══ */
-.confetti{position:absolute;top:0;width:8px;height:8px;z-index:10;pointer-events:none;animation:confettiFall var(--fall-dur,3s) cubic-bezier(.25,.46,.45,.94) forwards}
+.confetti{position:fixed;top:0;width:8px;height:8px;z-index:9999;pointer-events:none;animation:confettiFall var(--fall-dur,3s) cubic-bezier(.25,.46,.45,.94) forwards}
 @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:1}75%{opacity:1}100%{transform:translateY(var(--fall-dist,600px)) rotate(var(--spin,720deg)) translateX(var(--sway,40px));opacity:0}}
 
 /* ═══ FLOATING EMOJI REACT ═══ */
@@ -233,7 +234,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 </nav>
 
 <!-- ═══ STOCKS TICKER ═══ -->
-<div class="ticker"><div class="ticker-in" id="tickerContent"></div></div>
+<div class="ticker-wrap"><div class="ticker"><div class="ticker-in" id="tickerContent"></div></div></div>
 
 <!-- ═══ MAIN PAGE ═══ -->
 <div class="page">
@@ -279,7 +280,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
     <div class="edisplay" id="ed"></div>
     <div class="qprompt-row">
       <div class="qprompt">Which headline does this emoji sequence represent?</div>
-      <div class="kbh" id="kbhint">press or click 1&ndash;4 to answer</div>
+      <div class="kbh" id="kbhint">Press or click 1&ndash;4 to answer.</div>
     </div>
     <div class="opts-wrap">
       <div class="opts" id="op"></div>
@@ -300,7 +301,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
       <div class="gohl" id="gh"></div>
       <div class="gopw">you matched: <span id="gp"></span></div>
     </div>
-    <div class="fsw"><div class="fsv" id="gsc">0</div><div class="fslbl">LEVEL</div></div>
+    <div class="fsw"><div class="fslbl">LEVEL</div><div class="fsv" id="gsc">0</div></div>
     <div class="verd" id="gv"></div>
     <button class="btnp" onclick="resetGame()">Clock Back In &#x23CE;</button>
   </div>
@@ -367,7 +368,7 @@ const TREND_ITEMS=[
 const STOCKS=[
   {sym:"EMOJI",pct:"+2.4",up:true},{sym:"ATTN",pct:"-8.1",up:false},
   {sym:"CLKBT",pct:"+14.7",up:true},{sym:"NUANC",pct:"-99.2",up:false},
-  {sym:"DSCRL",pct:"+6.8",up:true},{sym:"FOMO",pct:"+22.1",up:true},
+  {sym:"FOMO",pct:"+22.1",up:true},
   {sym:"FACTS",pct:"-4.3",up:false},{sym:"VIBES",pct:"+11.9",up:true},
   {sym:"OUTRG",pct:"+31.0",up:true},{sym:"CNTXT",pct:"-67.5",up:false},
   {sym:"IRONY",pct:"-12.3",up:false},{sym:"TAKES",pct:"+8.4",up:true},
@@ -504,12 +505,10 @@ function ans(ch,cor){
   document.getElementById('kbhint').classList.add('hidden');
   const ok=ch===cor;
   S.hist.push({h:cor,e:S.cur.e.join(' '),ok,picked:ch});
-  S.q++;
   if(ok){
     S.streak++;S.best=Math.max(S.best,S.streak);
     document.getElementById('cf').classList.remove('hidden');
-    bar();
-    if(S.q>=50){
+    if(S.q>=49){
       canSkipAt=Infinity;
       autoTimer=setTimeout(()=>{autoTimer=null;winGame();},1200);
     }else{
@@ -517,11 +516,12 @@ function ans(ch,cor){
       autoTimer=setTimeout(nextQ,1200);
     }
   }else{
+    S.q++;
     bar();
     setTimeout(()=>gameOver(ch,cor),800);
   }
 }
-function nextQ(){autoTimer=null;rq();}
+function nextQ(){autoTimer=null;S.q++;rq();}
 
 /* ─── SCOREBAR ─── */
 function bar(){
@@ -558,25 +558,24 @@ function winGame(){
   scrollGameTop();
   document.getElementById('goLabel').textContent='— BREAKING —';
   document.getElementById('goBig').textContent='Perfect Translation Record';
-  document.getElementById('goSub').textContent="The Emoji Desk's first flawless employee.";
+  document.getElementById('goSub').textContent="The Translation Desk's first flawless employee.";
   document.querySelector('.gorev').classList.add('hidden');
   document.getElementById('gsc').textContent=50;
   document.getElementById('gv').textContent='CHIEF EMOJI OFFICER';
   const btn=document.querySelector('#go .btnp');
-  btn.textContent='Take A Victory Lap \u23CE';
+  btn.textContent='Keep Training \u23CE';
   btn.onclick=function(){resetGame();};
   launchConfetti();
 }
 
 /* ─── CONFETTI ─── */
 function launchConfetti(){
-  const wrap=document.querySelector('.game-wrap');
-  /* create a positioned overlay so confetti isn't a flex child */
   const layer=document.createElement('div');
-  layer.style.cssText='position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:10';
-  wrap.appendChild(layer);
-  const colors=['#1B6B2A','#8B7525','#9B5A10','#9B1B1B','#1A1A1A','#2D3A2E'];
-  const count=50;
+  layer.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:9999';
+  document.body.appendChild(layer);
+  const colors=['#E8434A','#F5A623','#4CAF50','#2196F3','#9C27B0','#FF6B35','#FFD700','#E91E63'];
+  const count=60;
+  const vh=window.innerHeight;
   let done=0;
   for(let i=0;i<count;i++){
     setTimeout(()=>{
@@ -584,16 +583,16 @@ function launchConfetti(){
       c.className='confetti';
       c.style.left=Math.random()*100+'%';
       c.style.background=colors[Math.floor(Math.random()*colors.length)];
-      c.style.width=(5+Math.random()*6)+'px';
-      c.style.height=(5+Math.random()*6)+'px';
-      c.style.setProperty('--fall-dist',(500+Math.random()*200)+'px');
-      c.style.setProperty('--sway',(Math.random()*80-40)+'px');
+      c.style.width=(6+Math.random()*8)+'px';
+      c.style.height=(6+Math.random()*8)+'px';
+      c.style.setProperty('--fall-dist',(vh+100)+'px');
+      c.style.setProperty('--sway',(Math.random()*120-60)+'px');
       c.style.setProperty('--spin',(Math.random()*1080-540)+'deg');
-      c.style.setProperty('--fall-dur',(2+Math.random()*2)+'s');
+      c.style.setProperty('--fall-dur',(2.5+Math.random()*2.5)+'s');
       c.style.borderRadius=Math.random()>.5?'50%':'0';
       layer.appendChild(c);
       c.addEventListener('animationend',()=>{c.remove();done++;if(done>=count)layer.remove();});
-    },i*40);
+    },i*35);
   }
 }
 
@@ -696,7 +695,7 @@ const EMOJI_NAV={
 };
 
 const EMOJI_STOCKS={
-  EMOJI:'😀',ATTN:'👀',CLKBT:'👆',NUANC:'🤷',DSCRL:'📜',FOMO:'😰',
+  EMOJI:'😀',ATTN:'👀',CLKBT:'👆',NUANC:'🤷',FOMO:'😰',
   FACTS:'📋',VIBES:'✨',OUTRG:'😤',CNTXT:'🧩',IRONY:'🙃',TAKES:'🔥'
 };
 
