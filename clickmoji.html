@@ -22,7 +22,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .masthead{background:var(--bg);padding:16px 0 0}
 .masthead-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
 .masthead-center{text-align:center;flex:1}
-.masthead-title{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,54px);font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1}
+.masthead-title{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,54px);font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1;margin-bottom:6px}
 .masthead-motto{font-family:'Libre Baskerville',serif;font-style:italic;font-size:10px;color:var(--mt);margin-top:3px;letter-spacing:.5px}
 .masthead-side{font-size:10px;color:var(--mt);line-height:1.7;min-width:140px}
 .masthead-side.right{text-align:right}
@@ -39,14 +39,14 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 
 /* ═══ SECTIONS NAV ═══ */
 .sections-bar{padding:8px 0;margin-top:8px}
-.sections-inner{max-width:1100px;margin:0 auto;padding:0 20px 8px;display:flex;gap:0;align-items:center;justify-content:center;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
+.sections-inner{max-width:1100px;margin:0 auto;padding:0 20px 8px;display:flex;gap:0;align-items:center;justify-content:center;flex-wrap:wrap}
 .section-link{font-family:'Libre Baskerville',serif;font-size:11px;color:var(--mt);text-decoration:none;cursor:pointer;padding:2px 12px;transition:color .15s}
 .section-link:hover,.section-link.active{color:var(--tx)}
 .section-sep{color:var(--bd);font-size:11px;user-select:none}
 @media(max-width:600px){.sections-bar{display:none}}
 
 /* ═══ STOCKS TICKER ═══ */
-.ticker{overflow:hidden;font-family:'Space Mono',monospace;font-size:11px;padding:5px 20px;white-space:nowrap;color:var(--tx);max-width:1100px;margin:0 auto}
+.ticker{overflow:hidden;font-family:'Space Mono',monospace;font-size:11px;padding:8px 20px;white-space:nowrap;color:var(--tx);max-width:1100px;margin:0 auto;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .ticker-in{display:inline-block;animation:tick 80s linear infinite;padding-left:100%}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 .tick-up{color:var(--green);font-weight:700}
@@ -55,12 +55,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 /* ═══ TOP AD ═══ */
 .top-ad-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;text-align:center;border-bottom:1px solid var(--bd)}
 .top-ad-label{font-family:'Libre Baskerville',serif;font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:8px}
-.top-ad{background:var(--ad-bg);border:1px solid var(--bd);padding:18px 24px;display:flex;align-items:center;justify-content:center;gap:20px;min-height:80px;cursor:pointer;transition:background .15s}
-.top-ad:hover{background:#EEEDEA}
+.top-ad{background:var(--ad-bg);border:1px solid var(--bd);padding:18px 24px;display:flex;align-items:center;gap:20px;min-height:80px}
 .top-ad-emoji{font-size:36px;flex-shrink:0}
-.top-ad-body{text-align:left}
+.top-ad-body{text-align:left;flex:1}
 .top-ad-title{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;line-height:1.3}
 .top-ad-sub{font-size:11px;color:var(--mt);margin-top:3px;line-height:1.4}
+.top-ad-cta{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;border:1.5px solid var(--tx);background:transparent;color:var(--tx);padding:8px 18px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.top-ad-cta:hover{background:var(--tx);color:var(--bg)}
 
 /* ═══ TWO-COLUMN LAYOUT ═══ */
 .page{max-width:1100px;margin:0 auto;padding:20px 20px 40px}
@@ -76,7 +77,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .d-num{font-family:'Playfair Display',serif;font-size:16px;color:var(--mt);margin-right:6px}
 
 /* ═══ GAME CONTAINER (fixed height) ═══ */
-.game-wrap{height:700px;display:flex;flex-direction:column;overflow:hidden}
+.game-wrap{height:620px;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .game-wrap>div{flex:1;overflow-y:auto}
 
 /* ═══ GAME CARD (newspaper-matched light) ═══ */
@@ -145,14 +146,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .cflash{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;background:rgba(242,241,235,.85);backdrop-filter:blur(3px);animation:flashPop .3s cubic-bezier(.34,1.56,.64,1)}
 @keyframes flashPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 .cfbig{font-family:'Playfair Display',serif;font-weight:900;font-size:36px;line-height:1;color:var(--green)}
-.cfpts{font-size:11px;color:var(--mt);letter-spacing:1px;margin-top:4px;font-family:'Space Mono',monospace}
 .kbh{font-size:10px;color:var(--mt);letter-spacing:1px;font-family:'Space Mono',monospace;white-space:nowrap}
 @media(max-width:768px){.kbh{display:none}}
 
 /* ═══ GAME OVER ═══ */
 .gow{text-align:center;padding:24px 16px}
-.golbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
-.gobig{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,38px);font-weight:900;line-height:1.1;color:var(--red);margin-bottom:4px}
+.golbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--tx);text-transform:uppercase;margin-bottom:8px}
+.gobig{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,38px);font-weight:900;line-height:1.1;color:var(--tx);margin-bottom:4px}
 .go-sub-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:11px;color:var(--mt);margin-bottom:16px;line-height:1.5;max-width:420px;margin-left:auto;margin-right:auto}
 .gorev{background:rgba(155,27,27,.04);border:1px solid rgba(155,27,27,.15);padding:14px 16px;margin:12px 0}
 .gorl{font-size:9px;letter-spacing:3px;color:var(--mt);margin-bottom:5px;font-family:'Space Mono',monospace}
@@ -162,6 +162,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .gopw span{color:var(--red)}
 .fsw{margin:14px 0 8px}
 .fsv{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(56px,14vw,90px);line-height:.9;color:var(--tx)}
+.fslbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-top:4px;font-family:'Space Mono',monospace}
 .verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:10px 0 16px}
 
 /* ═══ BUTTONS ═══ */
@@ -174,11 +175,15 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .lang-option:hover{color:var(--tx)}
 .lang-option.active{color:var(--tx);font-weight:700}
 .lang-sep{color:var(--bd);font-size:10px;user-select:none}
-.beta-badge{background:var(--red);color:var(--w);font-size:7px;font-weight:700;padding:2px 4px;letter-spacing:1px;font-family:'Space Mono',monospace;margin-left:4px}
+.beta-badge{background:var(--tx);color:var(--w);font-size:7px;font-weight:700;padding:2px 4px;letter-spacing:1px;font-family:'Space Mono',monospace;margin-left:4px}
 
 /* ═══ ANIMATIONS ═══ */
 @keyframes si{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .card{animation:si .3s cubic-bezier(.16,1,.3,1)}
+
+/* ═══ CONFETTI ═══ */
+.confetti{position:absolute;top:0;width:8px;height:8px;z-index:10;pointer-events:none;animation:confettiFall var(--fall-dur,3s) cubic-bezier(.25,.46,.45,.94) forwards}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:1}75%{opacity:1}100%{transform:translateY(var(--fall-dist,600px)) rotate(var(--spin,720deg)) translateX(var(--sway,40px));opacity:0}}
 
 /* ═══ FLOATING EMOJI REACT ═══ */
 .emoji-react{position:fixed;pointer-events:none;z-index:9999;font-size:22px;animation:emojiFloat 1.4s cubic-bezier(.2,.8,.3,1) forwards}
@@ -255,7 +260,6 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
   <div class="card" id="qc">
     <div class="card-header">
       <div class="card-header-left">
-        <div class="card-score-item"><div class="card-score-val" id="sc">0</div><div class="card-score-lbl">Score</div></div>
         <div class="card-score-item"><div class="card-score-val" id="rd">1/50</div><div class="card-score-lbl">Level</div></div>
         <span class="card-restart" onclick="event.stopPropagation();confirmRestart()">&#8635; Start over</span>
       </div>
@@ -279,7 +283,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
     </div>
     <div class="opts-wrap">
       <div class="opts" id="op"></div>
-      <div class="cflash hidden" id="cf"><div class="cfbig">&#10003; MATCH CONFIRMED</div><div class="cfpts" id="cp"></div></div>
+      <div class="cflash hidden" id="cf"><div class="cfbig">&#10003; MATCH CONFIRMED</div></div>
     </div>
   </div>
 </div>
@@ -296,7 +300,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
       <div class="gohl" id="gh"></div>
       <div class="gopw">you matched: <span id="gp"></span></div>
     </div>
-    <div class="fsw"><div class="fsv" id="gsc">0</div></div>
+    <div class="fsw"><div class="fsv" id="gsc">0</div><div class="fslbl">LEVEL</div></div>
     <div class="verd" id="gv"></div>
     <button class="btnp" onclick="resetGame()">Clock Back In &#x23CE;</button>
   </div>
@@ -317,34 +321,34 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 <script>
 /* ─── CONTENT LIBRARY ─── */
 const CL=[
-  [{h:"I Quit My Job To Become A Dog Influencer And Now I Have No Friends",e:["🐕","📸","👔","💔","😞"]},{h:"I Let My Cat Make All My Financial Decisions For A Year And We Lost Everything",e:["🐱","💰","📉","😰","💀"]},{h:"I Only Communicated In Emojis For A Week And My Therapist Quit",e:["💬","😶","📅","👩‍⚕️","🚪"]},{h:"I Spent A Year Saying Yes To Everything And Now I Own Three Timeshares",e:["✅","📅","😬","🏖️","💸"]},{h:"I Tried Living Like A Victorian For A Month And I Have Rickets Now",e:["🎩","📅","🕯️","🦴","😩"]},{h:"I Wore The Same Outfit For A Month And No One Noticed Including My Wife",e:["👕","📅","👁️","❌","😶"]},{h:"I Deleted All Social Media And Now I Just Stare At Walls Competitively",e:["📱","🗑️","🧱","👀","🏆"]}],
-  [{h:"27 Signs You're Definitely A Millennial And You're Probably Crying About It",e:["📱","☕","💀","💸","😭"]},{h:"Gen Z Is Killing The Napkin Industry And Honestly Boomers Have A Point",e:["🧻","📉","👴","😤","✅"]},{h:"Millennials Are Finally Buying Houses And Somehow This Is Also Bad News",e:["🏠","😬","💸","📰","😭"]},{h:"Gen Z Refuses To Use Email And Now The Entire Economy Is Collapsing",e:["📧","❌","📉","💀","🤷"]},{h:"Gen Alpha Has Invented A New Language And Linguists Are Openly Weeping",e:["👶","🗣️","❓","📖","😭"]},{h:"Millennials Now Spending More On Oat Milk Than Rent According To Study Nobody Asked For",e:["🥛","💸","🏠","📊","🤷"]},{h:"Gen Z Worker Asks For Feedback And Manager Needs Three Days To Recover",e:["💼","📝","😰","🛏️","📅"]}],
-  [{h:"The Government Has Been Lying About How Many Holes Are In A Cracker",e:["🫙","🏛️","🕵️","🤯","🔍"]},{h:"Scientists Confirm Your Coworker Who Microwaves Fish Is Actually A Sociopath",e:["🐟","🔬","🏢","😈","⚗️"]},{h:"Apparently You've Been Breathing Wrong Your Entire Life And We're Sorry",e:["💨","😲","😔","📋","❌"]},{h:"Doctors Reveal The One Food That Is Somehow Both Killing You And Saving You",e:["🍎","👨‍⚕️","💀","✅","😵"]},{h:"Researchers Discover Your Phone Screen Has More Bacteria Than A Hospital Floor",e:["📱","🦠","🏥","🔬","🤢"]},{h:"New Report Confirms That One Guy In Your Office Who Never Gets Sick Is Actually A Robot",e:["🏢","🤖","🔬","💪","😮"]}],
-  [{h:"10 Airbnbs So Remote You Will Almost Certainly Be Murdered There",e:["🏡","🌲","🗺️","🔪","😬"]},{h:"This Couple Quit Everything To Live In A Van And Now They Both Miss Toilets",e:["🚐","💑","🌅","🚽","😩"]},{h:"We Ranked Every Country By How Quickly You Would Die There Without Wi-Fi",e:["🌍","📶","❌","⏳","💀"]},{h:"Tourist Follows Google Maps Into A Lake And Gives It One Star",e:["🗺️","🚗","🌊","⭐","😤"]},{h:"Airline Introduces Standing Room Flights And Calls It Premium Vertical Seating",e:["✈️","🧍","💺","💎","😐"]},{h:"Hotel Charges $50 For Breakfast Buffet That Is Just Bread And Audacity",e:["🏨","🍞","💸","😤","🫠"]}],
-  [{h:"My Husband Left Me For Someone He Met At A Bread-Making Class And I'm Not Even Mad",e:["🍞","💑","💔","😐","🤷"]},{h:"This Dating App Matched Me With My Own Father And Other Horror Stories",e:["📱","❤️","👨","😱","🤖"]},{h:"Man Proposes At His Ex's Wedding And Claims It Was A Coincidence",e:["💍","💒","😤","🤥","👀"]},{h:"Couple Survives 30 Days In The Wilderness And Breaks Up In The Parking Lot After",e:["🌲","💑","✅","🚗","💔"]},{h:"Man Says I Love You For The First Time During An Argument About Dishes",e:["❤️","🗣️","😤","🍽️","😬"]},{h:"Dating Expert Says You Should Be Yourself Then Lists 47 Things To Change",e:["❤️","📝","🪞","😬","📋"]}],
-  [{h:"Apparently You've Been Eating Spaghetti Wrong Your Entire Life And We're Sorry",e:["🍝","❌","😲","😔","🤌"]},{h:"This Restaurant Charges $400 For A Sandwich And Has A Three Year Wait List",e:["🥪","💸","⏳","📋","😤"]},{h:"The Internet Cannot Decide Whether This Meal Is Breakfast Or A Cry For Help",e:["🍳","❓","🌐","😬","🆘"]},{h:"Food Blogger Spends 4000 Words Describing Their Childhood Before Getting To The Recipe",e:["📝","👶","📜","😤","🍰"]},{h:"Man Brings His Own Hot Sauce To Five Star Restaurant And Chef Quits On The Spot",e:["🌶️","🍽️","⭐","👨‍🍳","🚪"]},{h:"New Trendy Diet Requires You To Only Eat Foods That Start With The Letter Q",e:["🍽️","❓","📋","🤔","😩"]}],
-  [{h:"We Ranked Every Taylor Swift Album And Yes We Will Be Accepting Lawsuits",e:["🎵","📊","👑","⚖️","😤"]},{h:"Someone Calculated How Much Money Squid Game Contestants Made Per Hour",e:["🦑","💰","🧮","😬","⏱️"]},{h:"We Watched All 847 Episodes Of Grey's Anatomy In One Week For Your Benefit",e:["📺","🏥","📅","💀","🫡"]},{h:"Celebrity Spotted Looking Completely Normal And The Nation Is Unsettled",e:["⭐","😐","📸","😱","🏙️"]},{h:"New Netflix Show Has 97 Percent Rating But Everyone Who Watched It Is Fine",e:["📺","🌟","😐","✅","🤷"]},{h:"Award Show Nobody Asked For Announces Categories Nobody Understands",e:["🏆","❓","📋","🤔","😐"]}],
-  [{h:"I Quit My Corporate Job To Sell Candles And Now I Work 90 Hours A Week",e:["🕯️","💼","😮‍💨","⏰","💀"]},{h:"This CEO Wakes Up At 3am Every Day And Is Deeply Unpleasant To Be Around",e:["⏰","👔","😤","☕","💀"]},{h:"Man Turns Passion Into Career And Reports That Passion Is Now Destroyed",e:["❤️","💼","💔","📉","😶"]},{h:"New Study Finds Open Plan Offices Cause The Same Stress As Active Combat",e:["🏢","😤","🪖","📊","💥"]},{h:"Tech Startup Offers Unlimited Vacation And Zero Employees Have Taken Any",e:["🏖️","✅","💼","📊","0️⃣"]},{h:"Manager Schedules Meeting To Discuss Why There Are Too Many Meetings",e:["📅","🗣️","🔄","😩","💼"]}],
+  [{h:"I Quit My Job To Become A Dog Influencer And Now I Have No Friends",e:["🐕","📸","👔","💔","😞"]},{h:"I Let My Cat Make All My Financial Decisions For A Year And We Lost Everything",e:["🐱","💰","📉","😰","💀"]},{h:"I Only Communicated In Emojis For A Week And My Therapist Quit",e:["💬","😶","📅","👩‍⚕️","🚪"]},{h:"I Spent A Year Saying Yes To Everything And Now I Own Three Timeshares",e:["✅","📅","😬","🏖️","💸"]},{h:"I Tried Living Like A Victorian For A Month And I Have Rickets Now",e:["🎩","📅","🕯️","🦴","😩"]},{h:"I Wore The Same Outfit For A Month And No One Noticed Including My Wife",e:["👕","📅","👁️","❌","😶"]},{h:"I Deleted All Social Media And Now I Just Stare At Walls Competitively",e:["📱","🗑️","🧱","👀","🏆"]},{h:"I Adopted A Minimalist Lifestyle And Now I Sleep On The Floor By Choice",e:["🛏️","❌","🧘","😌","🪵"]},{h:"I Started A Gratitude Journal And Now I Resent Everything I Write Down",e:["📓","🙏","😤","✍️","💢"]},{h:"I Took A Pottery Class To Find Myself And Lost $3000 Instead",e:["🏺","🔍","💸","😩","🤷"]},{h:"I Moved To The Countryside For Peace And The Roosters Wake Up At 4am",e:["🏡","🌾","🐓","⏰","😫"]},{h:"I Did A Digital Detox And Missed My Own Surprise Birthday Party",e:["📵","🎂","😲","🎉","😢"]},{h:"I Let An AI Plan My Entire Wedding And It Booked A Clown Instead Of A DJ",e:["🤖","💒","🤡","🎵","😱"]}],
+  [{h:"27 Signs You're Definitely A Millennial And You're Probably Crying About It",e:["📱","☕","💀","💸","😭"]},{h:"Gen Z Is Killing The Napkin Industry And Honestly Boomers Have A Point",e:["🧻","📉","👴","😤","✅"]},{h:"Millennials Are Finally Buying Houses And Somehow This Is Also Bad News",e:["🏠","😬","💸","📰","😭"]},{h:"Gen Z Refuses To Use Email And Now The Entire Economy Is Collapsing",e:["📧","❌","📉","💀","🤷"]},{h:"Gen Alpha Has Invented A New Language And Linguists Are Openly Weeping",e:["👶","🗣️","❓","📖","😭"]},{h:"Millennials Now Spending More On Oat Milk Than Rent According To Study Nobody Asked For",e:["🥛","💸","🏠","📊","🤷"]},{h:"Gen Z Worker Asks For Feedback And Manager Needs Three Days To Recover",e:["💼","📝","😰","🛏️","📅"]},{h:"Boomers Discover Group Chat And Now Nobody Can Silence Their Phone",e:["👴","💬","📱","🔔","😫"]},{h:"Millennial Explains What A Meme Is To Their Parents For The 400th Time",e:["🧑","📱","👨‍👩‍👦","❓","😮‍💨"]},{h:"Gen Z Invents New Slang Word That Becomes Obsolete Before Article Is Published",e:["🗣️","✨","📰","⏰","💀"]},{h:"Study Finds Every Generation Thinks They Had The Hardest Childhood And All Are Wrong",e:["👶","📊","😤","❌","🤝"]},{h:"Gen Alpha Refuses To Learn Cursive Because Quote Keyboards Exist",e:["👶","✍️","❌","⌨️","🤷"]},{h:"Millennials Blame Avocado Toast While Eating Avocado Toast And Crying",e:["🥑","🍞","😭","💸","🤦"]}],
+  [{h:"The Government Has Been Lying About How Many Holes Are In A Cracker",e:["🫙","🏛️","🕵️","🤯","🔍"]},{h:"Scientists Confirm Your Coworker Who Microwaves Fish Is Actually A Sociopath",e:["🐟","🔬","🏢","😈","⚗️"]},{h:"Apparently You've Been Breathing Wrong Your Entire Life And We're Sorry",e:["💨","😲","😔","📋","❌"]},{h:"Doctors Reveal The One Food That Is Somehow Both Killing You And Saving You",e:["🍎","👨‍⚕️","💀","✅","😵"]},{h:"Researchers Discover Your Phone Screen Has More Bacteria Than A Hospital Floor",e:["📱","🦠","🏥","🔬","🤢"]},{h:"New Report Confirms That One Guy In Your Office Who Never Gets Sick Is Actually A Robot",e:["🏢","🤖","🔬","💪","😮"]},{h:"Study Reveals Houseplants Can Hear You Talking And They Are Judging You",e:["🌿","👂","🗣️","😒","📊"]},{h:"NASA Confirms The Moon Has Been Slowly Ghosting Earth For Millions Of Years",e:["🌙","🚀","💔","📏","😔"]},{h:"Scientists Accidentally Create New Color And It Is Deeply Unsettling",e:["🔬","🎨","😱","👁️","❓"]},{h:"Psychologists Confirm That Saying Fine When Asked How You Are Is Never True",e:["🧠","😐","🗣️","❌","📋"]},{h:"Study Finds Dogs Can Smell Disappointment And Yours Smells Terrible",e:["🐕","👃","😞","📊","💀"]},{h:"Researchers Prove Yawning Is Contagious Even Through Text And We're Sorry",e:["🥱","📱","🔬","😴","🤷"]},{h:"New Study Says Sitting Is The New Smoking And Standing Is The New Sitting",e:["🪑","🚬","🧍","🔄","📊"]}],
+  [{h:"10 Airbnbs So Remote You Will Almost Certainly Be Murdered There",e:["🏡","🌲","🗺️","🔪","😬"]},{h:"This Couple Quit Everything To Live In A Van And Now They Both Miss Toilets",e:["🚐","💑","🌅","🚽","😩"]},{h:"We Ranked Every Country By How Quickly You Would Die There Without Wi-Fi",e:["🌍","📶","❌","⏳","💀"]},{h:"Tourist Follows Google Maps Into A Lake And Gives It One Star",e:["🗺️","🚗","🌊","⭐","😤"]},{h:"Airline Introduces Standing Room Flights And Calls It Premium Vertical Seating",e:["✈️","🧍","💺","💎","😐"]},{h:"Hotel Charges $50 For Breakfast Buffet That Is Just Bread And Audacity",e:["🏨","🍞","💸","😤","🫠"]},{h:"Travel Influencer Describes Airport Lounge As Life Changing And We Have Questions",e:["✈️","📸","🛋️","🤔","❓"]},{h:"Cruise Ship Passenger Gets Lost For Three Days And No One Notices",e:["🚢","🗺️","❌","📅","😶"]},{h:"Budget Airline Now Charging Extra For Oxygen On Flights Over Four Hours",e:["✈️","💸","💨","⏰","😤"]},{h:"Man Plans Entire Vacation Around Restaurant Reservations And Nothing Else",e:["🍽️","📅","✈️","📋","🤤"]},{h:"Resort Advertises Unplugged Experience Then Charges For Wi-Fi Separately",e:["🏖️","📵","📶","💸","😑"]},{h:"Woman Returns From Vacation More Exhausted Than Before She Left",e:["✈️","🏖️","😫","🛏️","📉"]},{h:"Guidebook Recommends Hidden Gem Restaurant That Now Has A Four Hour Wait",e:["📖","🍽️","💎","⏰","😩"]}],
+  [{h:"My Husband Left Me For Someone He Met At A Bread-Making Class And I'm Not Even Mad",e:["🍞","💑","💔","😐","🤷"]},{h:"This Dating App Matched Me With My Own Father And Other Horror Stories",e:["📱","❤️","👨","😱","🤖"]},{h:"Man Proposes At His Ex's Wedding And Claims It Was A Coincidence",e:["💍","💒","😤","🤥","👀"]},{h:"Couple Survives 30 Days In The Wilderness And Breaks Up In The Parking Lot After",e:["🌲","💑","✅","🚗","💔"]},{h:"Man Says I Love You For The First Time During An Argument About Dishes",e:["❤️","🗣️","😤","🍽️","😬"]},{h:"Dating Expert Says You Should Be Yourself Then Lists 47 Things To Change",e:["❤️","📝","🪞","😬","📋"]},{h:"Woman Goes On 100 First Dates In A Year And Writes A Book Nobody Buys",e:["💑","💯","📅","📖","😶"]},{h:"Couple Celebrates Anniversary By Having The Same Argument They Had Last Year",e:["🎂","💑","🗣️","🔄","😤"]},{h:"Man Creates Spreadsheet To Track Dating Life And Gets Dumped For It",e:["📊","❤️","💻","💔","😬"]},{h:"Therapist Suggests Couple Try Active Listening And Both Immediately Fall Asleep",e:["👩‍⚕️","💑","👂","😴","🛋️"]},{h:"Best Friend Gives Brutally Honest Wedding Toast And Reception Goes Silent",e:["🥂","💒","😬","🤐","😱"]},{h:"Online Dating Profile Says Loves Hiking But Has Never Seen A Mountain In Person",e:["📱","🥾","⛰️","❌","🤥"]}],
+  [{h:"Apparently You've Been Eating Spaghetti Wrong Your Entire Life And We're Sorry",e:["🍝","❌","😲","😔","🤌"]},{h:"This Restaurant Charges $400 For A Sandwich And Has A Three Year Wait List",e:["🥪","💸","⏳","📋","😤"]},{h:"The Internet Cannot Decide Whether This Meal Is Breakfast Or A Cry For Help",e:["🍳","❓","🌐","😬","🆘"]},{h:"Food Blogger Spends 4000 Words Describing Their Childhood Before Getting To The Recipe",e:["📝","👶","📜","😤","🍰"]},{h:"Man Brings His Own Hot Sauce To Five Star Restaurant And Chef Quits On The Spot",e:["🌶️","🍽️","⭐","👨‍🍳","🚪"]},{h:"New Trendy Diet Requires You To Only Eat Foods That Start With The Letter Q",e:["🍽️","❓","📋","🤔","😩"]},{h:"Sourdough Starter Now Has More Followers On Instagram Than Its Owner",e:["🍞","📱","📈","😐","🤳"]},{h:"Local Cafe Charges $18 For Toast And Describes It As A Bread Experience",e:["☕","🍞","💸","✨","😤"]},{h:"Meal Kit Service Sends 47 Packets Of Sauce For A Recipe That Needs Two",e:["📦","🥫","📋","🤯","🗑️"]},{h:"Restaurant Puts Edible Flowers On Everything Including The Bill",e:["🍽️","🌸","💸","📋","🤨"]},{h:"Man Orders Coffee Black And Barista Stares At Him Like He Committed A Crime",e:["☕","😐","👁️","😤","🚨"]},{h:"Farmers Market Sells Single Heirloom Tomato For The Price Of A Used Car",e:["🍅","🧑‍🌾","💸","🚗","😱"]}],
+  [{h:"We Ranked Every Taylor Swift Album And Yes We Will Be Accepting Lawsuits",e:["🎵","📊","👑","⚖️","😤"]},{h:"Someone Calculated How Much Money Squid Game Contestants Made Per Hour",e:["🦑","💰","🧮","😬","⏱️"]},{h:"We Watched All 847 Episodes Of Grey's Anatomy In One Week For Your Benefit",e:["📺","🏥","📅","💀","🫡"]},{h:"Celebrity Spotted Looking Completely Normal And The Nation Is Unsettled",e:["⭐","😐","📸","😱","🏙️"]},{h:"New Netflix Show Has 97 Percent Rating But Everyone Who Watched It Is Fine",e:["📺","🌟","😐","✅","🤷"]},{h:"Award Show Nobody Asked For Announces Categories Nobody Understands",e:["🏆","❓","📋","🤔","😐"]},{h:"Movie Sequel Nobody Wanted Breaks Box Office Record And Critics Are Furious",e:["🎬","2️⃣","💰","📊","😤"]},{h:"Podcast Host Discovers Microphone Was Off For First 200 Episodes",e:["🎙️","🔇","📅","😱","💀"]},{h:"Book Club Hasn't Read A Book In Three Years But Snacks Have Improved Dramatically",e:["📖","❌","🍿","📈","😋"]},{h:"Reality TV Show Accidentally Films Something Real And Everyone Panics",e:["📺","😱","🎥","😰","🚨"]},{h:"Streaming Service Cancels Show With 100 Percent Audience Score Out Of Spite",e:["📺","❌","💯","😤","💀"]},{h:"Influencer With Zero Talent Wins Major Award And Nobody Is Surprised Anymore",e:["📱","🏆","🤷","😐","📸"]}],
+  [{h:"I Quit My Corporate Job To Sell Candles And Now I Work 90 Hours A Week",e:["🕯️","💼","😮‍💨","⏰","💀"]},{h:"This CEO Wakes Up At 3am Every Day And Is Deeply Unpleasant To Be Around",e:["⏰","👔","😤","☕","💀"]},{h:"Man Turns Passion Into Career And Reports That Passion Is Now Destroyed",e:["❤️","💼","💔","📉","😶"]},{h:"New Study Finds Open Plan Offices Cause The Same Stress As Active Combat",e:["🏢","😤","🪖","📊","💥"]},{h:"Tech Startup Offers Unlimited Vacation And Zero Employees Have Taken Any",e:["🏖️","✅","💼","📊","0️⃣"]},{h:"Manager Schedules Meeting To Discuss Why There Are Too Many Meetings",e:["📅","🗣️","🔄","😩","💼"]},{h:"Company Rebrand Takes 18 Months And The Logo Is Just Slightly More Blue",e:["🏢","🎨","📅","🔵","🤦"]},{h:"Intern Accidentally Replies All To Entire Company With Just The Word No",e:["📧","👤","🏢","❌","😱"]},{h:"Employee Of The Month Hasn't Been Seen In The Office Since March",e:["🏆","👻","🏢","📅","🤔"]},{h:"LinkedIn Post About Failure Gets More Likes Than Actual Accomplishment",e:["💼","📉","👍","📈","🤷"]},{h:"Team Building Exercise Destroys Last Remaining Shred Of Team Spirit",e:["🤝","💔","🏢","😐","💀"]},{h:"New Hire Finishes Onboarding Paperwork Just In Time For Layoffs",e:["📋","✅","👤","📉","😱"]}],
 ];
 const ALL=CL.flat();
 
 /* ─── FAKE ADS (prestige/classified parody) ─── */
 const ADS=[
-  {cat:"ADVERTISEMENT",t:"Artisanal Silence — Now Available in Jars",sub:"Hand-harvested from a monastery in Provence. $340/oz. Free shipping over $2,000.",em:"🤫🏺"},
-  {cat:"ADVERTISEMENT",t:"Bespoke Anxiety, Tailored to You",sub:"Why settle for generic dread? Our master craftsmen create worry unique to your circumstances. Est. 1847.",em:"🧵😰"},
-  {cat:"ADVERTISEMENT",t:"The Helvetica Wristwatch",sub:"It doesn't tell time. It implies it. Starting at $12,400.",em:"⌚✨"},
-  {cat:"ADVERTISEMENT",t:"Premium Hand-Sorted Oxygen",sub:"Each molecule individually inspected. \"Breathing has never felt so intentional.\" — subscriber",em:"💨🔬"},
-  {cat:"CLASSIFIEDS",t:"SEEKING: One (1) Sense of Purpose",sub:"Condition: new or gently used. Previous owner pivoted to crypto. Will pay up to $12.99.",em:"🧠💸"},
-  {cat:"CLASSIFIEDS",t:"FOR SALE: Antique Attention Span (c. 2005)",sub:"Capable of reading an entire article without checking phone. Collector's item. $8,400 OBO.",em:"🧠⏱️"},
-  {cat:"ADVERTISEMENT",t:"Estate-Bottled Disappointment",sub:"Notes of overtime, cold coffee, and unreturned calls. 94 points — Wine Spectator.",em:"🍷😩"},
-  {cat:"REAL ESTATE",t:"LUXURY 1BR — $4,200/mo",sub:"Charming 340 sq ft. Exposed everything. \"Character.\" Doorman judges you silently. No pets, no cooking, no joy.",em:"🏢🔑"},
-  {cat:"ADVERTISEMENT",t:"The Ottolenghi Doorstop",sub:"A cookbook so beautiful you will never open it. Display edition. Gilt edges. $85.",em:"📖✨"},
-  {cat:"CLASSIFIEDS",t:"LOST: All Momentum (vicinity of Tuesday)",sub:"Last seen during a 3pm meeting. No distinguishing features. Reward: the rest of the week off.",em:"📋😶"},
-  {cat:"ADVERTISEMENT",t:"Noise-Canceling Headphones for Your Thoughts",sub:"Finally. ANC technology that blocks your own internal monologue. FDA pending.",em:"🎧🧠"},
-  {cat:"ADVERTISEMENT",t:"Subscribe to Our Newsletter",sub:"We will email you every single day until one of us perishes. Unsubscribe link rendered in 4pt font.",em:"📧♾️"},
-  {cat:"REAL ESTATE",t:"COUNTRY ESTATE — $2.1M",sub:"12 acres. Built 1803. Ghosts included at no additional charge. \"They're mostly in the east wing.\"",em:"🏚️👻"},
-  {cat:"CLASSIFIEDS",t:"FREE: Partially Used New Year's Resolutions",sub:"Includes gym membership (unused since Jan 4), meditation app, and a journal with one entry.",em:"📓🏋️"},
-  {cat:"ADVERTISEMENT",t:"Grandma's Recipe for Success",sub:"Ingredients: guilt, passive aggression, casserole. Serves: the entire extended family whether they like it or not.",em:"👵🍲"},
+  {cat:"ADVERTISEMENT",t:"Artisanal Silence — Now Available in Jars",sub:"Hand-harvested from a monastery in Provence. $340/oz. Free shipping over $2,000.",em:"🤫🏺",cta:"Shop Silence"},
+  {cat:"ADVERTISEMENT",t:"Bespoke Anxiety, Tailored to You",sub:"Why settle for generic dread? Our master craftsmen create worry unique to your circumstances. Est. 1847.",em:"🧵😰",cta:"Browse Dread"},
+  {cat:"ADVERTISEMENT",t:"The Helvetica Wristwatch",sub:"It doesn't tell time. It implies it. Starting at $12,400.",em:"⌚✨",cta:"Imply Now"},
+  {cat:"ADVERTISEMENT",t:"Premium Hand-Sorted Oxygen",sub:"Each molecule individually inspected. \"Breathing has never felt so intentional.\" — subscriber",em:"💨🔬",cta:"Breathe Better"},
+  {cat:"CLASSIFIEDS",t:"SEEKING: One (1) Sense of Purpose",sub:"Condition: new or gently used. Previous owner pivoted to crypto. Will pay up to $12.99.",em:"🧠💸",cta:"Inquire Within"},
+  {cat:"CLASSIFIEDS",t:"FOR SALE: Antique Attention Span (c. 2005)",sub:"Capable of reading an entire article without checking phone. Collector's item. $8,400 OBO.",em:"🧠⏱️",cta:"Place A Bid"},
+  {cat:"ADVERTISEMENT",t:"Estate-Bottled Disappointment",sub:"Notes of overtime, cold coffee, and unreturned calls. 94 points — Wine Spectator.",em:"🍷😩",cta:"Order A Case"},
+  {cat:"REAL ESTATE",t:"LUXURY 1BR — $4,200/mo",sub:"Charming 340 sq ft. Exposed everything. \"Character.\" Doorman judges you silently. No pets, no cooking, no joy.",em:"🏢🔑",cta:"Schedule Tour"},
+  {cat:"ADVERTISEMENT",t:"The Ottolenghi Doorstop",sub:"A cookbook so beautiful you will never open it. Display edition. Gilt edges. $85.",em:"📖✨",cta:"Add To Shelf"},
+  {cat:"CLASSIFIEDS",t:"LOST: All Momentum (vicinity of Tuesday)",sub:"Last seen during a 3pm meeting. No distinguishing features. Reward: the rest of the week off.",em:"📋😶",cta:"Report Sighting"},
+  {cat:"ADVERTISEMENT",t:"Noise-Canceling Headphones for Your Thoughts",sub:"Finally. ANC technology that blocks your own internal monologue. FDA pending.",em:"🎧🧠",cta:"Silence Yourself"},
+  {cat:"ADVERTISEMENT",t:"Subscribe to Our Newsletter",sub:"We will email you every single day until one of us perishes. Unsubscribe link rendered in 4pt font.",em:"📧♾️",cta:"Subscribe Forever"},
+  {cat:"REAL ESTATE",t:"COUNTRY ESTATE — $2.1M",sub:"12 acres. Built 1803. Ghosts included at no additional charge. \"They're mostly in the east wing.\"",em:"🏚️👻",cta:"View Listing"},
+  {cat:"CLASSIFIEDS",t:"FREE: Partially Used New Year's Resolutions",sub:"Includes gym membership (unused since Jan 4), meditation app, and a journal with one entry.",em:"📓🏋️",cta:"Claim Yours"},
+  {cat:"ADVERTISEMENT",t:"Grandma's Recipe for Success",sub:"Ingredients: guilt, passive aggression, casserole. Serves: the entire extended family whether they like it or not.",em:"👵🍲",cta:"Get The Recipe"},
 ];
 
 const TREND_ITEMS=[
@@ -503,9 +507,7 @@ function ans(ch,cor){
   S.q++;
   if(ok){
     S.streak++;S.best=Math.max(S.best,S.streak);
-    const pts=100+(S.streak-1)*50;S.score+=pts;
     document.getElementById('cf').classList.remove('hidden');
-    document.getElementById('cp').textContent=`+${pts} PTS`;
     bar();
     if(S.q>=50){
       canSkipAt=Infinity;
@@ -523,7 +525,6 @@ function nextQ(){autoTimer=null;rq();}
 
 /* ─── SCOREBAR ─── */
 function bar(){
-  document.getElementById('sc').textContent=S.score;
   document.getElementById('rd').textContent=Math.min(S.q+1,50)+'/50';
 }
 
@@ -542,7 +543,7 @@ function gameOver(ch,cor){
   document.getElementById('gh').textContent=cor;
   document.getElementById('gp').textContent=ch;
   const title=getRL(S.q);
-  document.getElementById('gsc').textContent=S.score;
+  document.getElementById('gsc').textContent=S.q;
   document.getElementById('gv').textContent=title;
   const btn=document.querySelector('#go .btnp');
   btn.textContent='Clock Back In \u23CE';
@@ -559,11 +560,41 @@ function winGame(){
   document.getElementById('goBig').textContent='Perfect Translation Record';
   document.getElementById('goSub').textContent="The Emoji Desk's first flawless employee.";
   document.querySelector('.gorev').classList.add('hidden');
-  document.getElementById('gsc').textContent=S.score;
+  document.getElementById('gsc').textContent=50;
   document.getElementById('gv').textContent='CHIEF EMOJI OFFICER';
   const btn=document.querySelector('#go .btnp');
   btn.textContent='Take A Victory Lap \u23CE';
   btn.onclick=function(){resetGame();};
+  launchConfetti();
+}
+
+/* ─── CONFETTI ─── */
+function launchConfetti(){
+  const wrap=document.querySelector('.game-wrap');
+  /* create a positioned overlay so confetti isn't a flex child */
+  const layer=document.createElement('div');
+  layer.style.cssText='position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:10';
+  wrap.appendChild(layer);
+  const colors=['#1B6B2A','#8B7525','#9B5A10','#9B1B1B','#1A1A1A','#2D3A2E'];
+  const count=50;
+  let done=0;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=Math.random()*100+'%';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.width=(5+Math.random()*6)+'px';
+      c.style.height=(5+Math.random()*6)+'px';
+      c.style.setProperty('--fall-dist',(500+Math.random()*200)+'px');
+      c.style.setProperty('--sway',(Math.random()*80-40)+'px');
+      c.style.setProperty('--spin',(Math.random()*1080-540)+'deg');
+      c.style.setProperty('--fall-dur',(2+Math.random()*2)+'s');
+      c.style.borderRadius=Math.random()>.5?'50%':'0';
+      layer.appendChild(c);
+      c.addEventListener('animationend',()=>{c.remove();done++;if(done>=count)layer.remove();});
+    },i*40);
+  }
 }
 
 /* ─── SCROLL GAME TOP ─── */
@@ -600,7 +631,7 @@ function confirmRestart(){
 function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
 
 function renderTopAd(el,ad){
-  el.innerHTML=`<span class="top-ad-emoji">${ad.em}</span><div class="top-ad-body"><div class="top-ad-title">${ad.t}</div><div class="top-ad-sub">${ad.sub}</div></div>`;
+  el.innerHTML=`<span class="top-ad-emoji">${ad.em}</span><div class="top-ad-body"><div class="top-ad-title">${ad.t}</div><div class="top-ad-sub">${ad.sub}</div></div><button class="top-ad-cta" onclick="spawnEmojiReact(event.clientX,event.clientY)">${ad.cta||'Learn More'}</button>`;
 }
 
 function refreshAds(){
