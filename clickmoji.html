@@ -79,9 +79,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .d-num{font-family:'Playfair Display',serif;font-size:16px;color:var(--mt);margin-right:6px}
 
 /* ═══ GAME CONTAINER (fixed height) ═══ */
-.game-wrap{height:620px;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.game-wrap{height:480px;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .game-wrap>div{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-.game-wrap>div>.card,.game-wrap>div.start{flex:1}
 
 /* ═══ GAME CARD (newspaper-matched light) ═══ */
 .card{padding:24px;position:relative;overflow:hidden;background:var(--game-bg);color:var(--game-tx);border:1px solid var(--game-bd)}
@@ -156,16 +155,15 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .gow{text-align:center;padding:24px 16px}
 .golbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--tx);text-transform:uppercase;margin-bottom:8px}
 .gobig{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,38px);font-weight:900;line-height:1.1;color:var(--tx);margin-bottom:4px}
-.go-sub-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:11px;color:var(--mt);margin-bottom:16px;line-height:1.5;max-width:420px;margin-left:auto;margin-right:auto}
+.go-sub-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:11px;color:var(--mt);margin-bottom:16px;line-height:1.5}
 .gorev{background:rgba(155,27,27,.04);border:1px solid rgba(155,27,27,.15);padding:14px 16px;margin:12px 0}
-.gorl{font-size:9px;letter-spacing:3px;color:var(--mt);margin-bottom:5px;font-family:'Space Mono',monospace}
 .goemoji{font-size:30px;letter-spacing:6px;margin-bottom:6px}
 .gohl{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(13px,2.5vw,16px);color:var(--tx);line-height:1.3}
 .gopw{margin-top:5px;font-size:11px;color:var(--mt);letter-spacing:.5px}
 .gopw span{color:var(--red)}
 .fsw{margin:16px 0 4px}
 .fsv{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(56px,14vw,90px);line-height:.9;color:var(--tx)}
-.fslbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:2px;font-family:'Space Mono',monospace}
+.fslbl{font-size:8px;letter-spacing:3px;color:var(--mt);text-transform:uppercase;margin-bottom:0;font-family:'Space Mono',monospace}
 .verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:8px 0 16px}
 
 /* ═══ BUTTONS ═══ */
@@ -255,7 +253,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
     <div class="badge-photo" id="badgePhoto">🪪</div>
     <div class="badge-name-row"><input type="text" class="badge-input" id="playerName" maxlength="24" spellcheck="false"><span class="name-shuffle" onclick="regenName()" title="New name">🔀</span></div>
     <div class="badge-dept">Translation Desk</div>
-    <button class="btnp" onclick="startGame()">Clock In &#x23CE;</button>
+    <button class="btnp" onclick="startGame()">Clock in &#x23CE;</button>
   </div>
 </div>
 
@@ -299,14 +297,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
     <div class="gobig" id="goBig">We Regret the Error</div>
     <div class="go-sub-text" id="goSub"></div>
     <div class="gorev">
-      <div class="gorl">THE AI TRANSLATED&hellip;</div>
       <div class="goemoji" id="ge"></div>
       <div class="gohl" id="gh"></div>
       <div class="gopw">you matched: <span id="gp"></span></div>
     </div>
     <div class="fsw"><div class="fslbl">LEVEL</div><div class="fsv" id="gsc">0</div></div>
     <div class="verd" id="gv"></div>
-    <button class="btnp" onclick="resetGame()">Clock Back In &#x23CE;</button>
+    <button class="btnp" onclick="resetGame()">Clock back in &#x23CE;</button>
   </div>
 </div>
 
@@ -549,7 +546,7 @@ function gameOver(ch,cor){
   document.getElementById('gsc').textContent=S.q;
   document.getElementById('gv').textContent=title;
   const btn=document.querySelector('#go .btnp');
-  btn.textContent='Clock Back In \u23CE';
+  btn.textContent='Clock back in \u23CE';
   btn.onclick=function(){resetGame();};
 }
 
@@ -566,7 +563,7 @@ function winGame(){
   document.getElementById('gsc').textContent=50;
   document.getElementById('gv').textContent='CHIEF EMOJI OFFICER';
   const btn=document.querySelector('#go .btnp');
-  btn.textContent='Keep Training, '+playerDisplayName+' \u23CE';
+  btn.textContent='Keep Training \u23CE';
   btn.onclick=function(){resetGame();};
   launchConfetti();
 }
@@ -804,6 +801,8 @@ function applyEmojiToAd(){
   const adSub=topAd.querySelector('.top-ad-sub');
   if(adTitle){adTitle.dataset.orig=adTitle.textContent;adTitle.textContent='🛒✨💰🔥';}
   if(adSub){adSub.dataset.orig=adSub.textContent;adSub.textContent='👆👆👆 💵➡️😊';}
+  const adCta=topAd.querySelector('.top-ad-cta');
+  if(adCta){adCta.dataset.orig=adCta.textContent;adCta.textContent='👆';}
 }
 
 function restoreTextMode(){
