@@ -46,8 +46,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 @media(max-width:600px){.sections-bar{display:none}}
 
 /* ═══ STOCKS TICKER ═══ */
-.ticker-wrap{background:var(--ticker-bg);border-bottom:1px solid var(--bd)}
-.ticker{overflow:hidden;font-family:'Space Mono',monospace;font-size:11px;padding:5px 20px;white-space:nowrap;color:var(--tx);max-width:1100px;margin:0 auto}
+.ticker{overflow:hidden;background:var(--ticker-bg);border-bottom:1px solid var(--bd);font-family:'Space Mono',monospace;font-size:11px;padding:5px 20px;white-space:nowrap;color:var(--tx);max-width:1100px;margin:0 auto}
 .ticker-in{display:inline-block;animation:tick 80s linear infinite;padding-left:100%}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 .tick-up{color:var(--green);font-weight:700}
@@ -163,8 +162,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 .gopw span{color:var(--red)}
 .fsw{margin:14px 0 8px}
 .fsv{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(56px,14vw,90px);line-height:.9;color:var(--tx)}
-.verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:10px 0 3px}
-.verds{font-family:'Libre Baskerville',serif;font-style:italic;font-size:12px;color:var(--mt);margin-bottom:16px}
+.verd{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(14px,3vw,22px);color:var(--tx);margin:10px 0 16px}
 
 /* ═══ BUTTONS ═══ */
 .btnp{background:var(--tx);border:none;color:var(--bg);font-family:'Playfair Display',serif;font-weight:700;letter-spacing:1px;font-size:16px;padding:14px 44px;cursor:pointer;transition:all .2s}
@@ -230,7 +228,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
 </nav>
 
 <!-- ═══ STOCKS TICKER ═══ -->
-<div class="ticker-wrap"><div class="ticker"><div class="ticker-in" id="tickerContent"></div></div></div>
+<div class="ticker"><div class="ticker-in" id="tickerContent"></div></div>
 
 <!-- ═══ MAIN PAGE ═══ -->
 <div class="page">
@@ -301,7 +299,6 @@ body{background:var(--bg);color:var(--tx);font-family:'Libre Baskerville',Georgi
     </div>
     <div class="fsw"><div class="fsv" id="gsc">0</div></div>
     <div class="verd" id="gv"></div>
-    <div class="verds" id="gvs"></div>
     <button class="btnp" onclick="resetGame()">Clock Back In &#x23CE;</button>
   </div>
 </div>
@@ -542,16 +539,7 @@ function gameOver(ch,cor){
   document.getElementById('gp').textContent=ch;
   const title=getRL(S.q);
   document.getElementById('gsc').textContent=S.score;
-  const verdicts={
-    'INTERN':"The emojis were confusing. We'll allow it. This time.",
-    'JUNIOR ASSOCIATE':"You read more than the headline. Management finds this suspicious.",
-    'MID-LEVEL TRANSLATOR':"HR has noted your emoji literacy as 'disturbingly high.'",
-    'SENIOR EMOJI CORRESPONDENT':"The AI has requested you personally for all future training sessions.",
-    'VP OF TRANSLATION':"Your corner office is being prepared. It has a window.",
-    'CHIEF EMOJI OFFICER':"The board unanimously voted you in. The vote was conducted entirely in emojis."
-  };
   document.getElementById('gv').textContent=title;
-  document.getElementById('gvs').textContent=verdicts[title]||"Security has been notified.";
 }
 
 /* ─── SCROLL GAME TOP ─── */
