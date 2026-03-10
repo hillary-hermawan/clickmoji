@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Solo game flow", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await page.getByRole("button", { name: /Solo Training/i }).click();
   });
 
   test("renders start screen with badge, name input, and Clock in button", async ({
@@ -19,6 +20,8 @@ test.describe("Solo game flow", () => {
 
   test("name input is pre-filled with a random name", async ({ page }) => {
     const input = page.locator(".badge-input");
+    // Wait for useEffect to set the name
+    await expect(input).not.toHaveValue("", { timeout: 3000 });
     const value = await input.inputValue();
     expect(value.length).toBeGreaterThan(0);
   });

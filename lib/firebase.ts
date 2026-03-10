@@ -36,7 +36,8 @@ export function getFirebaseAuth(): Auth {
   return _auth;
 }
 
-// Convenience aliases for client code
+// Client-side singletons: initialized eagerly on the client, null on the server.
+// Safe because "use client" modules only execute getDb()/getFirebaseAuth() in the browser.
 export const db = typeof window !== "undefined" ? getDb() : (null as unknown as Firestore);
 export const auth = typeof window !== "undefined" ? getFirebaseAuth() : (null as unknown as Auth);
 

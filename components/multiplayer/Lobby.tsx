@@ -1,24 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ensureAnonymousAuth } from "@/lib/firebase";
+import { FAKE_NAMES, AVATAR_EMOJIS, AVATAR_COLORS } from "@/lib/game-data";
+import Avatar from "@/components/game/Avatar";
+import AvatarPicker from "@/components/game/AvatarPicker";
+import type { Avatar as AvatarType } from "@/types/game";
 
-interface LobbyProps {
-  onRoomCreated: (roomId: string, code: string) => void;
-  onRoomJoined: (roomId: string) => void;
-  playerName: string;
-  onNameChange: (name: string) => void;
+function randomAvatar(): AvatarType {
+  return {
+    emoji: AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)],
+    bgColor: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+  };
 }
 
-export default function Lobby({
-  onRoomCreated,
-  onRoomJoined,
-  playerName,
-  onNameChange,
-}: LobbyProps) {
+export default function Lobby() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState<AvatarType>({ emoji: "🎯", bgColor: "#2196F3" });
   const [joinCode, setJoinCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setName(FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)]);
+    setAvatar(randomAvatar());
+  }, []);
+
+  const regenName = () => {
+    let newName = name;
+    let attempt = 0;
+    while (attempt < 20) {
+      const pick = FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)];
+      if (pick !== name) {
+        newName = pick;
+        break;
+      }
+      attempt++;
+    }
+    setName(newName);
+    inputRef.current?.focus();
+    inputRef.current?.select();
+  };
+
+  const getPlayerName = () =>
+    name.trim() || FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)];
 
   const createRoom = async () => {
     setLoading(true);
@@ -33,14 +62,20 @@ export default function Lobby({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      // Join as host
+      const playerName = getPlayerName();
       await fetch(`/api/rooms/${data.roomId}/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, playerName }),
+        body: JSON.stringify({
+          uid: user.uid,
+          playerName,
+          avatar,
+        }),
       });
 
-      onRoomCreated(data.roomId, data.code);
+      sessionStorage.setItem("mp_playerName", playerName);
+      sessionStorage.setItem("mp_avatar", JSON.stringify(avatar));
+      router.push(`/room/${data.roomId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create room");
     } finally {
@@ -55,25 +90,31 @@ export default function Lobby({
     try {
       const user = await ensureAnonymousAuth();
 
-      // Look up room by code
       const lookupRes = await fetch(
         `/api/rooms/_?code=${encodeURIComponent(joinCode.trim().toUpperCase())}`
       );
       const lookupData = await lookupRes.json();
-      if (!lookupRes.ok) throw new Error(lookupData.error || "Room not found");
+      if (!lookupRes.ok)
+        throw new Error(lookupData.error || "Room not found");
 
       const roomId = lookupData.id;
 
-      // Join room
+      const playerName = getPlayerName();
       const joinRes = await fetch(`/api/rooms/${roomId}/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, playerName }),
+        body: JSON.stringify({
+          uid: user.uid,
+          playerName,
+          avatar,
+        }),
       });
       const joinData = await joinRes.json();
       if (!joinRes.ok) throw new Error(joinData.error);
 
-      onRoomJoined(roomId);
+      sessionStorage.setItem("mp_playerName", playerName);
+      sessionStorage.setItem("mp_avatar", JSON.stringify(avatar));
+      router.push(`/room/${roomId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to join room");
     } finally {
@@ -83,60 +124,133 @@ export default function Lobby({
 
   return (
     <div className="start" style={{ textAlign: "center" }}>
-      <div className="start-title">Multiplayer Lobby</div>
+      <div className="start-title">Group Interview</div>
       <p className="start-sub">
-        Create a room and invite friends, or join an existing room with a code.
+        Compete in real-time against other translators. Fastest correct answer
+        wins the most points.
       </p>
 
-      <div className="badge-wrap" style={{ marginBottom: 20 }}>
-        <div className="badge-photo">🎮</div>
-        <div className="badge-label">Your Name</div>
+      <div className="badge-wrap">
+        {/* Avatar */}
+        <div
+          style={{ cursor: "pointer", marginBottom: 4 }}
+          onClick={() => setShowAvatarPicker(!showAvatarPicker)}
+          title="Customize avatar"
+        >
+          <Avatar emoji={avatar.emoji} bgColor={avatar.bgColor} size={56} />
+        </div>
+
+        {showAvatarPicker && (
+          <div style={{ marginBottom: 12 }}>
+            <AvatarPicker avatar={avatar} onAvatarChange={setAvatar} />
+          </div>
+        )}
+
+        {/* Name input */}
         <div className="badge-name-row">
           <input
+            ref={inputRef}
             type="text"
             className="badge-input"
-            value={playerName}
-            onChange={(e) => onNameChange(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             maxLength={24}
             spellCheck={false}
           />
+          <span className="name-shuffle" onClick={regenName} title="New name">
+            🔀
+          </span>
         </div>
-        <div className="badge-dept" style={{ marginBottom: 20 }}>
-          Translation Desk — Multiplayer Division
+        <div className="badge-dept">Translation Desk — Multiplayer Division</div>
+
+        {/* Join with code */}
+        <div style={{ marginTop: 16 }}>
+          <div
+            style={{
+              fontFamily: "var(--font-space-mono)",
+              fontSize: 10,
+              letterSpacing: 1,
+              color: "var(--mt)",
+              textTransform: "uppercase",
+              marginBottom: 8,
+            }}
+          >
+            Enter Room Code
+          </div>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+            <input
+              type="text"
+              className="badge-input"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+              placeholder="VIBES"
+              maxLength={6}
+              style={{
+                width: 120,
+                textTransform: "uppercase",
+                textAlign: "center",
+                letterSpacing: 3,
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") joinRoom();
+              }}
+            />
+            <button
+              className="btnp"
+              onClick={joinRoom}
+              disabled={loading || !joinCode.trim()}
+              style={{ padding: "10px 20px" }}
+            >
+              {loading ? "..." : "Join"}
+            </button>
+          </div>
         </div>
 
-        <button
-          className="btnp"
-          onClick={createRoom}
-          disabled={loading}
-          style={{ marginBottom: 16 }}
-        >
-          {loading ? "Creating..." : "Create Room"}
-        </button>
-
+        {/* Divider */}
         <div
           style={{
             borderTop: "1px solid var(--bd)",
             margin: "16px 0",
-            paddingTop: 16,
+            position: "relative",
           }}
         >
-          <div className="badge-label" style={{ marginBottom: 8 }}>
-            Or Join With Code
-          </div>
-          <input
-            type="text"
-            className="badge-input"
-            value={joinCode}
-            onChange={(e) => setJoinCode(e.target.value)}
-            placeholder="MOJI-1234"
-            maxLength={9}
-            style={{ marginBottom: 12, textTransform: "uppercase" }}
-          />
-          <br />
-          <button className="btnp" onClick={joinRoom} disabled={loading}>
-            {loading ? "Joining..." : "Join Room"}
-          </button>
+          <span
+            style={{
+              position: "absolute",
+              top: -8,
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "var(--game-bg)",
+              padding: "0 12px",
+              fontFamily: "var(--font-space-mono)",
+              fontSize: 10,
+              color: "var(--mt)",
+              letterSpacing: 1,
+            }}
+          >
+            OR
+          </span>
+        </div>
+
+        {/* Create room */}
+        <button
+          className="btnp"
+          onClick={createRoom}
+          disabled={loading}
+          style={{ width: "100%" }}
+        >
+          {loading ? "Creating..." : "Create New Room"}
+        </button>
+
+        {/* Back link */}
+        <div style={{ marginTop: 12 }}>
+          <span
+            className="card-restart"
+            style={{ marginLeft: 0 }}
+            onClick={() => router.push("/")}
+          >
+            &larr; Back to Solo Training
+          </span>
         </div>
 
         {error && (
@@ -145,7 +259,7 @@ export default function Lobby({
               color: "var(--red)",
               fontSize: 11,
               marginTop: 12,
-              fontFamily: "'Space Mono', monospace",
+              fontFamily: "var(--font-space-mono)",
             }}
           >
             {error}

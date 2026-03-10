@@ -1,32 +1,60 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-
-function generateCode(): string {
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `MOJI-${num}`;
-}
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
+import { generateRoomCode } from "@/lib/game-logic";
+import { DEFAULT_GAME_SETTINGS } from "@/types/game";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { hostSessionId, maxPlayers = 8 } = body;
+    const { hostSessionId, maxPlayers: rawMaxPlayers } = body;
 
     if (!hostSessionId) {
       return NextResponse.json({ error: "hostSessionId required" }, { status: 400 });
     }
 
-    const code = generateCode();
+    const maxPlayers = Math.min(4, Math.max(2, rawMaxPlayers ?? 4));
     const seed = Math.floor(Math.random() * 2147483647);
-    const db = getDb();
 
-    const docRef = await addDoc(collection(db, "rooms"), {
+    // Generate a unique room code (retry up to 10 times on collision)
+    let code: string = "";
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      code = generateRoomCode();
+
+      // Check for active rooms with the same code
+      const existing = await adminDb
+        .collection("rooms")
+        .where("code", "==", code)
+        .where("status", "in", ["waiting", "countdown", "playing"])
+        .get();
+
+      if (existing.empty) {
+        break;
+      }
+
+      attempts++;
+      if (attempts >= maxAttempts) {
+        return NextResponse.json(
+          { error: "Unable to generate unique room code. Please try again." },
+          { status: 500 }
+        );
+      }
+    }
+
+    const docRef = await adminDb.collection("rooms").add({
       code,
       status: "waiting",
       hostSessionId,
       seed,
       maxPlayers,
-      createdAt: serverTimestamp(),
+      currentRound: 0,
+      roundPhase: null,
+      roundStartedAt: null,
+      settings: DEFAULT_GAME_SETTINGS,
+      createdAt: FieldValue.serverTimestamp(),
       startedAt: null,
       finishedAt: null,
     });

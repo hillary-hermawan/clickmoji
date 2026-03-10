@@ -1,238 +1,428 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { db, auth } from "@/lib/firebase";
 import {
   collection,
   onSnapshot,
   doc,
   updateDoc,
-  serverTimestamp,
+  arrayUnion,
+  Timestamp,
 } from "firebase/firestore";
 import GameScreen from "@/components/game/GameScreen";
-import GameOverScreen from "@/components/game/GameOverScreen";
-import { mulberry32, pickQuestion, initialGameState } from "@/lib/game-logic";
-import type { GameState, QuestionPick, Headline, Player } from "@/types/game";
+import RoundResults from "@/components/multiplayer/RoundResults";
+import FinalStandings from "@/components/multiplayer/FinalStandings";
+import { mulberry32, pickQuestion, calculateRoundScore } from "@/lib/game-logic";
+import type { QuestionPick, Player, GameSettings, Room, RoundHistoryEntry } from "@/types/game";
 
 interface MultiplayerGameProps {
   roomId: string;
   seed: number;
+  settings: GameSettings;
   playerName: string;
 }
 
 export default function MultiplayerGame({
   roomId,
   seed,
+  settings,
   playerName,
 }: MultiplayerGameProps) {
-  const [state, setState] = useState<GameState>(initialGameState);
-  const [question, setQuestion] = useState<QuestionPick | null>(null);
-  const [screen, setScreen] = useState<"game" | "gameover">("game");
+  const router = useRouter();
+
+  // Room state from Firestore
+  const [room, setRoom] = useState<Partial<Room>>({
+    currentRound: 1,
+    roundPhase: "question",
+    status: "playing",
+  });
+
+  // Player list from Firestore
   const [players, setPlayers] = useState<Player[]>([]);
-  const [lastCorrectH, setLastCorrectH] = useState("");
-  const [lastChosenH, setLastChosenH] = useState("");
-  const [lastQuestion, setLastQuestion] = useState<Headline | null>(null);
-  const [isWin, setIsWin] = useState(false);
+
+  // Local state
+  const [question, setQuestion] = useState<QuestionPick | null>(null);
+  const [myScore, setMyScore] = useState(0);
+  const [myStreak, setMyStreak] = useState(0);
+  const [myBestStreak, setMyBestStreak] = useState(0);
+  const [hasAnsweredThisRound, setHasAnsweredThisRound] = useState(false);
+  const [resultsCountdown, setResultsCountdown] = useState(5);
+  const [correctHeadline, setCorrectHeadline] = useState("");
+
+  // Refs for stable access in callbacks
   const rngRef = useRef(mulberry32(seed));
-  const stateRef = useRef(state);
-  stateRef.current = state;
+  const usedRef = useRef<string[]>([]);
+  const roundStartTimeRef = useRef<number>(Date.now());
+  const myScoreRef = useRef(0);
+  const myStreakRef = useRef(0);
+  const myBestStreakRef = useRef(0);
+  const isHostRef = useRef(false);
 
-  // Init first question
+  // Keep refs in sync
+  myScoreRef.current = myScore;
+  myStreakRef.current = myStreak;
+  myBestStreakRef.current = myBestStreak;
+
+  const currentRound = room.currentRound ?? 1;
+  const roundPhase = room.roundPhase ?? "question";
+  const roomStatus = room.status ?? "playing";
+  const isHotTake = settings.hotTakeRounds.includes(currentRound);
+
+  const uid = auth?.currentUser?.uid;
+
+  // Determine if current user is host
   useEffect(() => {
-    const rng = mulberry32(seed);
-    rngRef.current = rng;
-    const s = initialGameState();
-    const q = pickQuestion(s.used, s.q + 1, rng);
-    s.used.push(q.cor.h);
-    s.cur = q.cor;
-    setState(s);
-    setQuestion(q);
-  }, [seed]);
+    const me = players.find((p) => p.uid === uid);
+    if (me) isHostRef.current = me.isHost;
+  }, [players, uid]);
 
-  // Subscribe to other players
+  // Generate question for a specific round (deterministic from seed)
+  const generateQuestionForRound = useCallback(
+    (round: number) => {
+      const rng = mulberry32(seed);
+      const used: string[] = [];
+      let q: QuestionPick | null = null;
+
+      for (let i = 1; i <= round; i++) {
+        q = pickQuestion(used, i, rng);
+        used.push(q.cor.h);
+      }
+
+      usedRef.current = used;
+      rngRef.current = rng;
+      return q!;
+    },
+    [seed]
+  );
+
+  // Subscribe to room doc
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "rooms", roomId), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setRoom({
+          currentRound: data.currentRound ?? 1,
+          roundPhase: data.roundPhase ?? "question",
+          status: data.status ?? "playing",
+          roundStartedAt: data.roundStartedAt?.toDate?.() ?? null,
+        });
+      }
+    });
+    return () => unsub();
+  }, [roomId]);
+
+  // Subscribe to players subcollection
   useEffect(() => {
     const unsub = onSnapshot(
       collection(db, "rooms", roomId, "players"),
       (snap) => {
-        setPlayers(snap.docs.map((d) => d.data() as Player));
+        const list = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            ...data,
+            uid: d.id,
+          } as Player;
+        });
+        setPlayers(list);
       }
     );
     return () => unsub();
   }, [roomId]);
 
-  // Update own player doc
-  const updatePlayerDoc = useCallback(
-    async (round: number, alive: boolean) => {
-      const uid = auth.currentUser?.uid;
-      if (!uid) return;
-      const playerRef = doc(db, "rooms", roomId, "players", uid);
-      await updateDoc(playerRef, {
-        currentRound: round,
-        isAlive: alive,
-        ...(alive ? {} : { eliminatedAt: serverTimestamp() }),
-      });
-    },
-    [roomId]
-  );
+  // When round changes, generate question
+  useEffect(() => {
+    if (roomStatus !== "playing") return;
+    if (roundPhase !== "question") return;
 
+    const q = generateQuestionForRound(currentRound);
+    setQuestion(q);
+    setCorrectHeadline(q.cor.h);
+    setHasAnsweredThisRound(false);
+    roundStartTimeRef.current = Date.now();
+  }, [currentRound, roundPhase, roomStatus, generateQuestionForRound]);
+
+  // Host: auto-advance to results when all players answered
+  useEffect(() => {
+    if (!isHostRef.current) return;
+    if (roundPhase !== "question") return;
+    if (players.length === 0) return;
+
+    const allAnswered = players.every(
+      (p) => p.currentRoundAnswer !== null
+    );
+
+    if (allAnswered) {
+      // Brief delay so last answer visually registers
+      const timer = setTimeout(async () => {
+        try {
+          await fetch(`/api/rooms/${roomId}/advance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              uid: auth?.currentUser?.uid,
+              phase: "results",
+            }),
+          });
+        } catch {
+          // ignore
+        }
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [players, roundPhase, roomId]);
+
+  // Results countdown: host advances to next round after countdown
+  useEffect(() => {
+    if (roundPhase !== "results") return;
+
+    setResultsCountdown(5);
+    const interval = setInterval(() => {
+      setResultsCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          // Host advances to next round
+          if (isHostRef.current) {
+            fetch(`/api/rooms/${roomId}/advance`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                uid: auth?.currentUser?.uid,
+                phase: "next",
+              }),
+            }).catch(() => {});
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [roundPhase, roomId]);
+
+  // Handle player answer
   const handleAnswer = useCallback(
-    (chosen: string, correct: string) => {
-      const s = { ...stateRef.current };
+    async (chosen: string, correct: string) => {
+      if (hasAnsweredThisRound || !uid) return;
+      setHasAnsweredThisRound(true);
+
+      const timeMs = Date.now() - roundStartTimeRef.current;
       const isCorrect = chosen === correct;
 
-      if (isCorrect) {
-        s.streak++;
-        s.best = Math.max(s.best, s.streak);
-        s.q++;
+      const newStreak = isCorrect ? myStreakRef.current + 1 : 0;
+      const pointsEarned = calculateRoundScore({
+        correct: isCorrect,
+        timeMs,
+        timerSeconds: settings.timerSeconds,
+        streak: isCorrect ? newStreak : 0,
+        isHotTake,
+        penaltyEnabled: settings.penaltyEnabled,
+        penaltyPoints: settings.penaltyPoints,
+        scoreFloorEnabled: settings.scoreFloorEnabled,
+        scoreFloor: settings.scoreFloor,
+        currentScore: myScoreRef.current,
+      });
 
-        if (s.q >= 50) {
-          setState(s);
-          setIsWin(true);
-          setScreen("gameover");
-          updatePlayerDoc(50, true);
-          return;
-        }
+      const newScore = myScoreRef.current + pointsEarned;
+      const newBestStreak = Math.max(myBestStreakRef.current, newStreak);
 
-        setState(s);
-        const q = pickQuestion(s.used, s.q + 1, rngRef.current);
-        s.used.push(q.cor.h);
-        s.cur = q.cor;
-        setState({ ...s });
-        setQuestion(q);
-        updatePlayerDoc(s.q, true);
-      } else {
-        s.streak = 0;
-        s.q++;
-        setState(s);
-        setLastCorrectH(correct);
-        setLastChosenH(chosen);
-        setLastQuestion(stateRef.current.cur);
-        setIsWin(false);
-        setScreen("gameover");
-        updatePlayerDoc(s.q, false);
+      setMyScore(newScore);
+      setMyStreak(newStreak);
+      setMyBestStreak(newBestStreak);
+
+      const roundEntry: RoundHistoryEntry = {
+        round: currentRound,
+        chosen,
+        correct: isCorrect,
+        timeMs,
+        pointsEarned,
+      };
+
+      // Write to Firestore
+      const playerRef = doc(db, "rooms", roomId, "players", uid);
+      try {
+        await updateDoc(playerRef, {
+          score: newScore,
+          streak: newStreak,
+          bestStreak: newBestStreak,
+          currentRoundAnswer: {
+            chosen,
+            correct: isCorrect,
+            answeredAt: Timestamp.now(),
+            timeMs,
+            pointsEarned,
+          },
+          roundHistory: arrayUnion(roundEntry),
+        });
+      } catch {
+        // ignore write errors
       }
     },
-    [updatePlayerDoc]
+    [
+      hasAnsweredThisRound,
+      uid,
+      currentRound,
+      roomId,
+      settings,
+      isHotTake,
+    ]
   );
 
-  const handleTimeUp = useCallback(() => {
-    const s = { ...stateRef.current };
-    s.streak = 0;
-    s.q++;
-    setState(s);
-    setLastCorrectH(s.cur?.h || "");
-    setLastChosenH("\u23F1\uFE0F DEADLINE MISSED");
-    setLastQuestion(s.cur);
-    setIsWin(false);
-    setScreen("gameover");
-    updatePlayerDoc(s.q, false);
-  }, [updatePlayerDoc]);
+  // Handle time up
+  const handleTimeUp = useCallback(async () => {
+    if (hasAnsweredThisRound || !uid) return;
+    setHasAnsweredThisRound(true);
 
-  const handleRestart = useCallback(() => {
-    // In multiplayer, restart just goes back to viewing scoreboard
-    // Could navigate back to lobby
+    const timeMs = settings.timerSeconds * 1000;
+
+    const pointsEarned = calculateRoundScore({
+      correct: false,
+      timeMs,
+      timerSeconds: settings.timerSeconds,
+      streak: 0,
+      isHotTake,
+      penaltyEnabled: settings.penaltyEnabled,
+      penaltyPoints: settings.penaltyPoints,
+      scoreFloorEnabled: settings.scoreFloorEnabled,
+      scoreFloor: settings.scoreFloor,
+      currentScore: myScoreRef.current,
+    });
+
+    const newScore = myScoreRef.current + pointsEarned;
+    setMyScore(newScore);
+    setMyStreak(0);
+
+    const roundEntry: RoundHistoryEntry = {
+      round: currentRound,
+      chosen: null,
+      correct: false,
+      timeMs,
+      pointsEarned,
+    };
+
+    const playerRef = doc(db, "rooms", roomId, "players", uid);
+    try {
+      await updateDoc(playerRef, {
+        score: newScore,
+        streak: 0,
+        currentRoundAnswer: {
+          chosen: null,
+          correct: false,
+          answeredAt: Timestamp.now(),
+          timeMs,
+          pointsEarned,
+        },
+        roundHistory: arrayUnion(roundEntry),
+      });
+    } catch {
+      // ignore
+    }
+  }, [hasAnsweredThisRound, uid, currentRound, roomId, settings, isHotTake]);
+
+  // Handle reaction emoji
+  const handleReaction = useCallback(
+    (emoji: string) => {
+      // Could store in Firestore, for now just visual feedback
+      const el = document.createElement("span");
+      el.className = "emoji-react";
+      el.textContent = emoji;
+      el.style.left = `${50 + Math.random() * 30 - 15}%`;
+      el.style.top = "50%";
+      el.style.setProperty("--drift", `${Math.random() * 40 - 20}px`);
+      el.style.fontSize = "32px";
+      document.body.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
+    },
+    []
+  );
+
+  // Build opponents list for GameScreen pressure indicators
+  const opponents = players
+    .filter((p) => p.uid !== uid)
+    .map((p) => ({
+      playerName: p.playerName,
+      avatar: p.avatar || { emoji: "🎯", bgColor: "#2196F3" },
+      hasAnswered: p.currentRoundAnswer !== null,
+    }));
+
+  // Noop restart for multiplayer
+  const handleRestart = useCallback(() => {}, []);
+
+  // Callback after answering (for GameScreen's onAnswered)
+  const handleAnswered = useCallback(() => {
+    // No additional action needed; the answer callback handles Firestore
   }, []);
 
-  // Update cur in state
-  useEffect(() => {
-    if (question) {
-      setState((prev) => ({ ...prev, cur: question.cor }));
-    }
-  }, [question]);
+  const handlePlayAgain = useCallback(() => {
+    // Navigate back to room (which will show waiting room)
+    window.location.reload();
+  }, []);
 
-  const alivePlayers = players.filter((p) => p.isAlive);
-  const deadPlayers = players.filter((p) => !p.isAlive);
+  const handleBackToLobby = useCallback(() => {
+    router.push("/lobby");
+  }, [router]);
 
+  // Finished state
+  if (roomStatus === "finished") {
+    return (
+      <div className="game-wrap" style={{ height: "auto" }}>
+        <FinalStandings
+          players={players}
+          onPlayAgain={handlePlayAgain}
+          onBackToLobby={handleBackToLobby}
+        />
+      </div>
+    );
+  }
+
+  // Results phase
+  if (roundPhase === "results" && roomStatus === "playing") {
+    return (
+      <div className="game-wrap" style={{ height: "auto" }}>
+        <RoundResults
+          roundNum={currentRound}
+          totalRounds={settings.rounds}
+          correctHeadline={correctHeadline}
+          players={players}
+          isHotTake={isHotTake}
+          onReaction={handleReaction}
+          countdown={resultsCountdown}
+        />
+      </div>
+    );
+  }
+
+  // Question phase
+  if (roundPhase === "question" && question && roomStatus === "playing") {
+    return (
+      <div className="game-wrap" style={{ height: "auto" }}>
+        <GameScreen
+          question={question}
+          roundNum={currentRound}
+          playerName={playerName}
+          onAnswer={handleAnswer}
+          onTimeUp={handleTimeUp}
+          onRestart={handleRestart}
+          mode="multiplayer"
+          totalRounds={settings.rounds}
+          score={myScore}
+          timerOverride={settings.timerSeconds}
+          isHotTake={isHotTake}
+          opponents={opponents}
+          onAnswered={handleAnswered}
+          hideRestart
+        />
+      </div>
+    );
+  }
+
+  // Loading / transition
   return (
     <div className="game-wrap" style={{ height: "auto" }}>
-      {screen === "game" && question && (
-        <div>
-          <GameScreen
-            question={question}
-            roundNum={state.q + 1}
-            playerName={playerName}
-            onAnswer={handleAnswer}
-            onTimeUp={handleTimeUp}
-            onRestart={handleRestart}
-          />
-        </div>
-      )}
-
-      {screen === "gameover" && (
-        <div>
-          <GameOverScreen
-            roundsCompleted={state.q}
-            playerName={playerName}
-            lastQuestion={lastQuestion}
-            lastCorrectH={lastCorrectH}
-            lastChosenH={lastChosenH}
-            isWin={isWin}
-            onRestart={handleRestart}
-          />
-        </div>
-      )}
-
-      {/* Live Scoreboard */}
-      <div
-        style={{
-          border: "1px solid var(--bd)",
-          background: "var(--game-bg)",
-          padding: 16,
-          marginTop: 12,
-        }}
-      >
-        <div className="col-label">Live Scoreboard</div>
-        {alivePlayers
-          .sort((a, b) => b.currentRound - a.currentRound)
-          .map((p) => (
-            <div
-              key={p.uid}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "4px 0",
-                borderBottom: "1px solid var(--bd)",
-                fontSize: 12,
-              }}
-            >
-              <span style={{ fontWeight: 700 }}>
-                {p.playerName} {p.isHost && "👑"}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  color: "var(--green)",
-                }}
-              >
-                Round {p.currentRound}
-              </span>
-            </div>
-          ))}
-        {deadPlayers.map((p) => (
-          <div
-            key={p.uid}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "4px 0",
-              borderBottom: "1px solid var(--bd)",
-              fontSize: 12,
-              opacity: 0.5,
-            }}
-          >
-            <span style={{ textDecoration: "line-through" }}>
-              {p.playerName}
-            </span>
-            <span
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                color: "var(--red)",
-              }}
-            >
-              Eliminated (R{p.currentRound})
-            </span>
-          </div>
-        ))}
+      <div className="start" style={{ textAlign: "center" }}>
+        <div className="start-title">Loading round...</div>
       </div>
     </div>
   );

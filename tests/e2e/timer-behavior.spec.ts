@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
 
+async function goToSolo(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Solo Training/i }).click();
+}
+
 test.describe("Timer behavior", () => {
   test("no timer visible for round 1", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 
@@ -11,7 +16,7 @@ test.describe("Timer behavior", () => {
   });
 
   test("timer appears at round 11", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Advance through 10 correct rounds
@@ -29,7 +34,7 @@ test.describe("Timer behavior", () => {
   });
 
   test("timer counts down", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Advance to round 11
@@ -58,7 +63,7 @@ test.describe("Timer behavior", () => {
     page,
   }) => {
     test.setTimeout(60000);
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Advance to round 11

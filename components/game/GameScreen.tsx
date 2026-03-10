@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { getTL, getRL } from "@/lib/game-logic";
 import type { Headline, QuestionPick } from "@/types/game";
+import Avatar from "./Avatar";
 
 interface GameScreenProps {
   question: QuestionPick;
@@ -11,6 +12,18 @@ interface GameScreenProps {
   onAnswer: (chosen: string, correct: string) => void;
   onTimeUp: () => void;
   onRestart: () => void;
+  mode?: "solo" | "multiplayer";
+  totalRounds?: number;
+  score?: number;
+  timerOverride?: number;
+  isHotTake?: boolean;
+  opponents?: Array<{
+    playerName: string;
+    avatar: { emoji: string; bgColor: string };
+    hasAnswered: boolean;
+  }>;
+  onAnswered?: () => void;
+  hideRestart?: boolean;
 }
 
 export default function GameScreen({
@@ -20,6 +33,14 @@ export default function GameScreen({
   onAnswer,
   onTimeUp,
   onRestart,
+  mode = "solo",
+  totalRounds,
+  score,
+  timerOverride,
+  isHotTake,
+  opponents,
+  onAnswered,
+  hideRestart,
 }: GameScreenProps) {
   const [answered, setAnswered] = useState(false);
   const [chosenH, setChosenH] = useState<string | null>(null);
@@ -30,7 +51,12 @@ export default function GameScreen({
   const canSkipAtRef = useRef(Infinity);
   const answeredRef = useRef(false);
 
-  const tl = getTL(roundNum);
+  const isMultiplayer = mode === "multiplayer";
+  const effectiveTimerLength =
+    timerOverride !== undefined ? timerOverride : getTL(roundNum);
+  const tl = isMultiplayer
+    ? effectiveTimerLength
+    : getTL(roundNum);
   const title = getRL(roundNum);
   const correctH = question.cor.h;
 
@@ -87,6 +113,8 @@ export default function GameScreen({
         timerRef.current = null;
       }
 
+      onAnswered?.();
+
       const isCorrect = chosenHeadline === correctH;
       if (isCorrect) {
         setShowFlash(true);
@@ -99,7 +127,7 @@ export default function GameScreen({
         setTimeout(() => onAnswer(chosenHeadline, correctH), 800);
       }
     },
-    [correctH, onAnswer]
+    [correctH, onAnswer, onAnswered]
   );
 
   // Keyboard handler
@@ -147,31 +175,73 @@ export default function GameScreen({
     return {};
   };
 
+  // Compute opponent stats
+  const answeredCount = opponents
+    ? opponents.filter((o) => o.hasAnswered).length
+    : 0;
+  const totalOpponents = opponents ? opponents.length : 0;
+
   return (
     <div className="card" key={`q-${roundNum}`}>
       <div className="card-header">
         <div className="card-header-left">
           <div className="card-score-item">
-            <div className="card-score-val">
-              {Math.min(roundNum, 50)}/50
-            </div>
-            <div className="card-score-lbl">Level</div>
+            {isMultiplayer ? (
+              <>
+                <div className="card-score-val">
+                  {roundNum} of {totalRounds}
+                </div>
+                <div className="card-score-lbl">Round</div>
+              </>
+            ) : (
+              <>
+                <div className="card-score-val">
+                  {Math.min(roundNum, 50)}/50
+                </div>
+                <div className="card-score-lbl">Level</div>
+              </>
+            )}
           </div>
-          <span
-            className="card-restart"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRestart();
-            }}
-          >
-            &#8635; Start over
-          </span>
+          {!hideRestart && (
+            <span
+              className="card-restart"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRestart();
+              }}
+            >
+              &#8635; Start over
+            </span>
+          )}
         </div>
         <div className="player-info">
           <div className="player-name">{playerName}</div>
-          <div className="player-title">{title}</div>
+          {isMultiplayer ? (
+            <div className="player-title">
+              {(score ?? 0).toLocaleString()} pts
+            </div>
+          ) : (
+            <div className="player-title">{title}</div>
+          )}
         </div>
       </div>
+
+      {isHotTake && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "6px 0",
+            fontFamily: "var(--font-space-mono)",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: 2,
+            color: "var(--red)",
+            background: "rgba(155,27,27,0.06)",
+          }}
+        >
+          🔥 HOT TAKE — DOUBLE POINTS 🔥
+        </div>
+      )}
 
       <div className={`timer-wrap ${tl > 0 ? "active" : ""}`}>
         <div className="timer-row">
@@ -219,6 +289,72 @@ export default function GameScreen({
           </div>
         )}
       </div>
+
+      {opponents && opponents.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: 12,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
+              justifyContent: "center",
+            }}
+          >
+            {opponents.map((opp) => (
+              <div
+                key={opp.playerName}
+                style={{ position: "relative", display: "inline-flex" }}
+              >
+                <Avatar
+                  emoji={opp.avatar.emoji}
+                  bgColor={opp.avatar.bgColor}
+                  size={28}
+                />
+                {opp.hasAnswered && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: -2,
+                      right: -2,
+                      width: 14,
+                      height: 14,
+                      borderRadius: "50%",
+                      backgroundColor: "var(--green)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 9,
+                      color: "#fff",
+                      fontWeight: 700,
+                      lineHeight: 1,
+                    }}
+                  >
+                    ✓
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-space-mono)",
+              fontSize: 11,
+              color: "var(--mt)",
+              marginTop: 6,
+            }}
+          >
+            {answeredCount} of {totalOpponents} opponent
+            {totalOpponents !== 1 ? "s" : ""} answered
+          </div>
+        </div>
+      )}
     </div>
   );
 }

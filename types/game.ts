@@ -46,13 +46,61 @@ export interface QuestionPick {
 }
 
 // Multiplayer types
+
+export interface GameSettings {
+  rounds: number;
+  timerSeconds: number;
+  penaltyEnabled: boolean;
+  penaltyPoints: number;
+  scoreFloorEnabled: boolean;
+  scoreFloor: number;
+  hotTakeRounds: number[];
+  difficultyScaling: boolean;
+}
+
+export const DEFAULT_GAME_SETTINGS: GameSettings = {
+  rounds: 10,
+  timerSeconds: 15,
+  penaltyEnabled: true,
+  penaltyPoints: 200,
+  scoreFloorEnabled: false,
+  scoreFloor: 0,
+  hotTakeRounds: [5, 8],
+  difficultyScaling: false,
+};
+
+export interface Avatar {
+  emoji: string;
+  bgColor: string;
+}
+
+export interface RoundAnswer {
+  chosen: string | null;
+  correct: boolean;
+  answeredAt: Date | null;
+  timeMs: number;
+  pointsEarned: number;
+}
+
+export interface RoundHistoryEntry {
+  round: number;
+  chosen: string | null;
+  correct: boolean;
+  timeMs: number;
+  pointsEarned: number;
+}
+
 export interface Room {
   id: string;
   code: string;
-  status: "waiting" | "playing" | "finished";
+  status: "waiting" | "countdown" | "playing" | "finished";
   hostSessionId: string;
   seed: number;
   maxPlayers: number;
+  currentRound: number;
+  roundPhase: "question" | "results" | null;
+  roundStartedAt: Date | null;
+  settings: GameSettings;
   createdAt: Date;
   startedAt: Date | null;
   finishedAt: Date | null;
@@ -62,10 +110,20 @@ export interface Player {
   uid: string;
   playerName: string;
   isHost: boolean;
-  currentRound: number;
-  isAlive: boolean;
+  avatar: Avatar;
+  score: number;
+  streak: number;
+  bestStreak: number;
+  currentRoundAnswer: RoundAnswer | null;
+  roundHistory: RoundHistoryEntry[];
   joinedAt: Date;
-  eliminatedAt: Date | null;
+}
+
+export interface MvpAward {
+  title: string;
+  playerName: string;
+  avatar: Avatar;
+  stat: string;
 }
 
 export interface Score {
@@ -74,4 +132,14 @@ export interface Score {
   gameMode: "solo" | "multiplayer";
   roomId: string | null;
   playedAt: Date;
+}
+
+export interface MultiplayerWinnerHeadline {
+  big: (name: string) => string;
+  sub: (name: string) => string;
+}
+
+export interface PhotoFinishHeadline {
+  big: string;
+  sub: (winner: string, loser: string, diff: number) => string;
 }

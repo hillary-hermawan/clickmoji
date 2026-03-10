@@ -1,4 +1,4 @@
-import { Headline, Ad, Stock, Weather, GameOverHeadline } from "@/types/game";
+import { Headline, Ad, Stock, Weather, GameOverHeadline, MultiplayerWinnerHeadline, PhotoFinishHeadline } from "@/types/game";
 
 export const CL: Headline[][] = [
   [
@@ -243,3 +243,68 @@ export const REACT_EMOJIS: string[] = [
 export const NAV_SECTIONS = [
   "News", "Interdimensional Affairs", "Unsolicited Advice", "Loud Speculation",
 ];
+
+/* ─── Multiplayer: Avatars ─── */
+
+export const AVATAR_EMOJIS: string[] = [
+  "🎯", "🔥", "⚡", "🌟", "💎", "🎪", "🦊", "🐙",
+  "🌵", "🍄", "🎲", "🧲", "🪐", "🎸", "🦉", "🐝",
+];
+
+export const AVATAR_COLORS: string[] = [
+  "#E8434A", "#F5A623", "#4CAF50", "#2196F3",
+  "#9C27B0", "#FF6B35", "#E91E63", "#00BCD4",
+];
+
+/* ─── Multiplayer: Winner Headlines ─── */
+
+export const MP_WINNER_HEADLINES: MultiplayerWinnerHeadline[] = [
+  {
+    big: (name) => `${name} Wins Editorial Board Seat`,
+    sub: () => `Performance described as "unprecedented" by sources who declined to be named.`,
+  },
+  {
+    big: (name) => `${name} Named Employee of the Millennium`,
+    sub: () => `HR confirms plaque is on order. Expected delivery: never.`,
+  },
+  {
+    big: (name) => `${name} Promoted Past All Reasonable Expectations`,
+    sub: () => `"We didn't even know that title existed," admits CEO.`,
+  },
+  {
+    big: (name) => `${name} Crowned Chief Emoji Officer in Landslide`,
+    sub: () => `The board vote was unanimous, mostly because nobody else showed up.`,
+  },
+  {
+    big: (name) => `${name} Shatters All Previous Newsroom Records`,
+    sub: () => `Editors confirm the record book has been confiscated for further review.`,
+  },
+  {
+    big: (name) => `${name} Receives Key to the Translation Desk`,
+    sub: () => `Facilities notes the key does not open any actual door.`,
+  },
+];
+
+/* ─── Multiplayer: Photo Finish Headlines ─── */
+
+export const PHOTO_FINISH_HEADLINES: PhotoFinishHeadline[] = [
+  {
+    big: "Results Too Close to Call at Deadline",
+    sub: (winner, loser, diff) =>
+      `${winner} edges out ${loser} by ${diff} points in what editors are calling "the closest finish in Translation Desk history."`,
+  },
+  {
+    big: "Recount Demanded After Razor-Thin Margin",
+    sub: (winner, loser, diff) =>
+      `Only ${diff} points separate ${winner} and ${loser}. Legal is reviewing.`,
+  },
+  {
+    big: "Stop the Presses: Final Score Under Review",
+    sub: (winner, loser, diff) =>
+      `${winner} claims victory over ${loser} by a mere ${diff} points. The union has filed a grievance.`,
+  },
+];
+
+/* ─── Multiplayer: Reaction Emojis ─── */
+
+export const ROUND_REACTION_EMOJIS: string[] = ["🔥", "😭", "🤯", "😎", "🤡"];

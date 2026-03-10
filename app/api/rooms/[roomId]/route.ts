@@ -1,20 +1,20 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
 
 export async function GET(
   request: Request,
   { params }: { params: { roomId: string } }
 ) {
   try {
-    const db = getDb();
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
 
     if (code) {
       // Look up by code
-      const q = query(collection(db, "rooms"), where("code", "==", code));
-      const snap = await getDocs(q);
+      const snap = await adminDb
+        .collection("rooms")
+        .where("code", "==", code)
+        .get();
       if (snap.empty) {
         return NextResponse.json({ error: "Room not found" }, { status: 404 });
       }
@@ -23,10 +23,9 @@ export async function GET(
     }
 
     // Look up by ID
-    const roomRef = doc(db, "rooms", params.roomId);
-    const roomSnap = await getDoc(roomRef);
+    const roomSnap = await adminDb.collection("rooms").doc(params.roomId).get();
 
-    if (!roomSnap.exists()) {
+    if (!roomSnap.exists) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
