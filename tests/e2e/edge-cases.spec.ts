@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
 
+async function goToSolo(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Solo Training/i }).click();
+}
+
 test.describe("Edge cases", () => {
   test("empty name defaults to random fake name", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     const input = page.locator(".badge-input");
     await input.fill("");
     await page.locator(".btnp").click();
@@ -14,7 +19,7 @@ test.describe("Edge cases", () => {
   });
 
   test("custom name is displayed in game", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     const input = page.locator(".badge-input");
     await input.fill("TestPlayer");
     await page.locator(".btnp").click();
@@ -22,7 +27,7 @@ test.describe("Edge cases", () => {
   });
 
   test("custom name persists to game over screen", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".badge-input").fill("MyName");
     await page.locator(".btnp").click();
 
@@ -36,7 +41,7 @@ test.describe("Edge cases", () => {
   });
 
   test("shuffle button generates new name", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     const input = page.locator(".badge-input");
     const firstValue = await input.inputValue();
 
@@ -48,7 +53,7 @@ test.describe("Edge cases", () => {
   });
 
   test("name input maxLength is 24 characters", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     const input = page.locator(".badge-input");
     await input.fill("A".repeat(30));
     const value = await input.inputValue();
@@ -58,7 +63,7 @@ test.describe("Edge cases", () => {
   test("rapid clicking on answer buttons does not break game", async ({
     page,
   }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 
@@ -79,7 +84,7 @@ test.describe("Edge cases", () => {
   });
 
   test("start over button during game resets to round 1", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Answer correctly to reach round 2
@@ -100,6 +105,7 @@ test.describe("Edge cases", () => {
     const adTitle = page.locator(".top-ad-title");
     const initialAd = await adTitle.textContent();
 
+    await page.getByRole("button", { name: /Solo Training/i }).click();
     await page.locator(".btnp").click();
 
     // Answer correctly - ad should refresh (may or may not change due to randomness)
@@ -111,7 +117,7 @@ test.describe("Edge cases", () => {
   });
 
   test("game works with mouse only (no keyboard)", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
 
     // Start with mouse
     await page.locator(".btnp").click();

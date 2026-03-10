@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
 
+async function goToSolo(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Solo Training/i }).click();
+}
+
 test.describe("Keyboard navigation", () => {
   test("pressing 1-4 selects corresponding answer", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 
@@ -15,7 +20,7 @@ test.describe("Keyboard navigation", () => {
   });
 
   test("keys 5-9 and letters do not trigger answer", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 
@@ -31,7 +36,7 @@ test.describe("Keyboard navigation", () => {
   test("keyboard 1-4 ignored when name input is focused on start screen", async ({
     page,
   }) => {
-    await page.goto("/");
+    await goToSolo(page);
     const input = page.locator(".badge-input");
     await input.focus();
 
@@ -46,7 +51,7 @@ test.describe("Keyboard navigation", () => {
   });
 
   test("Enter key on game over screen restarts game", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Trigger game over with wrong answer
@@ -60,7 +65,7 @@ test.describe("Keyboard navigation", () => {
   });
 
   test("keyboard can skip auto-advance after 350ms", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 
@@ -81,7 +86,7 @@ test.describe("Keyboard navigation", () => {
   test("rapid keyboard presses only register first answer", async ({
     page,
   }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
     await expect(page.locator(".edisplay")).toBeVisible();
 

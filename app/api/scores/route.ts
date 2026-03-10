@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(request: Request) {
   try {
-    const db = getDb();
     const body = await request.json();
     const { playerName, roundsSurvived, gameMode, roomId } = body;
 
@@ -15,12 +14,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const docRef = await addDoc(collection(db, "scores"), {
+    const docRef = await adminDb.collection("scores").add({
       playerName,
       roundsSurvived,
       gameMode,
       roomId: roomId || null,
-      playedAt: serverTimestamp(),
+      playedAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json({ scoreId: docRef.id });

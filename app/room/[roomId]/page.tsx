@@ -11,6 +11,8 @@ import WaitingRoom from "@/components/multiplayer/WaitingRoom";
 import MultiplayerGame from "@/components/multiplayer/MultiplayerGame";
 import { db, ensureAnonymousAuth } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import type { GameSettings } from "@/types/game";
+import { DEFAULT_GAME_SETTINGS } from "@/types/game";
 
 export default function RoomPage() {
   const params = useParams();
@@ -18,24 +20,34 @@ export default function RoomPage() {
   const [emojiMode, setEmojiMode] = useState(false);
   const [roomCode, setRoomCode] = useState("");
   const [seed, setSeed] = useState<number | null>(null);
+  const [settings, setSettings] = useState<GameSettings>(DEFAULT_GAME_SETTINGS);
   const [status, setStatus] = useState<"loading" | "waiting" | "playing">(
     "loading"
   );
   const [playerName, setPlayerName] = useState("");
 
   useEffect(() => {
+    // Restore player name from session
+    const storedName = sessionStorage.getItem("mp_playerName");
+    if (storedName) setPlayerName(storedName);
+
     async function load() {
-      await ensureAnonymousAuth();
-      const roomSnap = await getDoc(doc(db, "rooms", roomId));
-      if (roomSnap.exists()) {
-        const data = roomSnap.data();
-        setRoomCode(data.code);
-        if (data.status === "playing") {
-          setSeed(data.seed);
-          setStatus("playing");
-        } else {
-          setStatus("waiting");
+      try {
+        await ensureAnonymousAuth();
+        const roomSnap = await getDoc(doc(db, "rooms", roomId));
+        if (roomSnap.exists()) {
+          const data = roomSnap.data();
+          setRoomCode(data.code);
+          if (data.settings) setSettings(data.settings);
+          if (data.status === "playing") {
+            setSeed(data.seed);
+            setStatus("playing");
+          } else {
+            setStatus("waiting");
+          }
         }
+      } catch (err) {
+        console.error("Room load error:", err);
       }
     }
     load();
@@ -45,10 +57,14 @@ export default function RoomPage() {
     setEmojiMode(mode === "emoji");
   }, []);
 
-  const handleGameStart = useCallback((gameSeed: number) => {
-    setSeed(gameSeed);
-    setStatus("playing");
-  }, []);
+  const handleGameStart = useCallback(
+    (gameSeed: number, gameSettings: GameSettings) => {
+      setSeed(gameSeed);
+      setSettings(gameSettings);
+      setStatus("playing");
+    },
+    []
+  );
 
   return (
     <>
@@ -77,6 +93,7 @@ export default function RoomPage() {
               <MultiplayerGame
                 roomId={roomId}
                 seed={seed}
+                settings={settings}
                 playerName={playerName || "Player"}
               />
             )}

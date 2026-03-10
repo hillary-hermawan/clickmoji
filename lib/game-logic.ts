@@ -1,4 +1,4 @@
-import { Headline, QuestionPick, GameState } from "@/types/game";
+import { Headline, QuestionPick, GameState, MvpAward, RoundHistoryEntry, Player } from "@/types/game";
 import { CL, ALL } from "./game-data";
 
 /* ─── Seeded PRNG (mulberry32) ─── */
@@ -103,4 +103,112 @@ export function initialGameState(): GameState {
     cur: null,
     timeLeft: 0,
   };
+}
+
+/* ─── Multiplayer Scoring ─── */
+export function calculateRoundScore(params: {
+  correct: boolean;
+  timeMs: number;
+  timerSeconds: number;
+  streak: number;
+  isHotTake: boolean;
+  penaltyEnabled: boolean;
+  penaltyPoints: number;
+  scoreFloorEnabled: boolean;
+  scoreFloor: number;
+  currentScore: number;
+}): number {
+  if (!params.correct) {
+    if (!params.penaltyEnabled) return 0;
+    const penalty = -params.penaltyPoints;
+    if (params.scoreFloorEnabled) {
+      return Math.max(params.scoreFloor - params.currentScore, penalty);
+    }
+    return penalty;
+  }
+
+  const timerMs = params.timerSeconds * 1000;
+  const timeRemaining = Math.max(0, timerMs - params.timeMs);
+  const base = 1000;
+  const speed = Math.round(500 * (timeRemaining / timerMs));
+  const streakBonus = Math.min(params.streak * 100, 500);
+  let total = base + speed + streakBonus;
+  if (params.isHotTake) total *= 2;
+  return total;
+}
+
+/* ─── MVP Awards ─── */
+export function calculateMvpAwards(players: Player[]): MvpAward[] {
+  const awards: MvpAward[] = [];
+  if (players.length === 0) return awards;
+
+  // Fastest Typesetter — lowest avg response time (correct answers only)
+  const avgTimes = players
+    .map((p) => {
+      const correctRounds = p.roundHistory.filter((r) => r.correct);
+      if (correctRounds.length === 0) return { player: p, avg: Infinity };
+      const avg =
+        correctRounds.reduce((sum, r) => sum + r.timeMs, 0) /
+        correctRounds.length;
+      return { player: p, avg };
+    })
+    .filter((x) => x.avg !== Infinity)
+    .sort((a, b) => a.avg - b.avg);
+
+  if (avgTimes.length > 0) {
+    const winner = avgTimes[0];
+    awards.push({
+      title: "Fastest Typesetter",
+      playerName: winner.player.playerName,
+      avatar: winner.player.avatar,
+      stat: `avg ${(winner.avg / 1000).toFixed(1)}s response time`,
+    });
+  }
+
+  // Longest Press Run — highest bestStreak
+  const streakWinner = [...players].sort(
+    (a, b) => b.bestStreak - a.bestStreak
+  )[0];
+  if (streakWinner.bestStreak > 0) {
+    awards.push({
+      title: "Longest Press Run",
+      playerName: streakWinner.playerName,
+      avatar: streakWinner.avatar,
+      stat: `${streakWinner.bestStreak} correct in a row`,
+    });
+  }
+
+  // Late Edition Surge — most points in final 3 rounds
+  const finalRoundPoints = players.map((p) => {
+    const history = p.roundHistory;
+    const totalRounds = history.length;
+    const last3 = history.filter((r) => r.round > totalRounds - 3);
+    const points = last3.reduce((sum, r) => sum + r.pointsEarned, 0);
+    return { player: p, points };
+  }).sort((a, b) => b.points - a.points);
+
+  if (finalRoundPoints.length > 0 && finalRoundPoints[0].points > 0) {
+    const winner = finalRoundPoints[0];
+    awards.push({
+      title: "Late Edition Surge",
+      playerName: winner.player.playerName,
+      avatar: winner.player.avatar,
+      stat: `+${winner.points.toLocaleString()} pts in final 3 rounds`,
+    });
+  }
+
+  return awards;
+}
+
+/* ─── Room Code Generation ─── */
+export const ROOM_CODE_WORDS = [
+  "EMOJI", "ATTN", "CLKBT", "NUANC", "FOMO",
+  "FACTS", "VIBES", "OUTRG", "CNTXT", "IRONY", "TAKES",
+  "HYPE", "CHAOS", "DRAMA", "TREND", "RUMOR",
+  "PANIC", "SCOOP", "BLURB", "GAFFE", "SNARK",
+  "CRINGE", "SLAY", "RATIO", "SHADE", "CLOUT",
+];
+
+export function generateRoomCode(rng: () => number = Math.random): string {
+  return ROOM_CODE_WORDS[Math.floor(rng() * ROOM_CODE_WORDS.length)];
 }

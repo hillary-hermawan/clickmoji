@@ -13,6 +13,11 @@ import {
   EMOJI_STOCKS,
   REACT_EMOJIS,
   TREND_ITEMS,
+  AVATAR_EMOJIS,
+  AVATAR_COLORS,
+  MP_WINNER_HEADLINES,
+  PHOTO_FINISH_HEADLINES,
+  ROUND_REACTION_EMOJIS,
 } from "@/lib/game-data";
 
 describe("headline data integrity", () => {
@@ -147,5 +152,77 @@ describe("navigation and emoji mappings", () => {
 
   it("TREND_ITEMS has at least 5 entries for Most Read section", () => {
     expect(TREND_ITEMS.length).toBeGreaterThanOrEqual(5);
+  });
+});
+
+/* ─── Multiplayer Data ─── */
+
+describe("avatar data", () => {
+  it("AVATAR_EMOJIS has at least 10 entries", () => {
+    expect(AVATAR_EMOJIS.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it("AVATAR_COLORS has at least 6 entries", () => {
+    expect(AVATAR_COLORS.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all avatar colors are valid hex colors", () => {
+    AVATAR_COLORS.forEach((c) => {
+      expect(c).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    });
+  });
+});
+
+describe("multiplayer winner headlines", () => {
+  it("has at least 3 entries", () => {
+    expect(MP_WINNER_HEADLINES.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("big and sub are callable functions returning non-empty strings", () => {
+    MP_WINNER_HEADLINES.forEach((h) => {
+      const big = h.big("TestPlayer");
+      const sub = h.sub("TestPlayer");
+      expect(big.length).toBeGreaterThan(0);
+      expect(sub.length).toBeGreaterThan(0);
+    });
+  });
+
+  it("headlines include the player name", () => {
+    MP_WINNER_HEADLINES.forEach((h) => {
+      const big = h.big("Ziggy");
+      expect(big).toContain("Ziggy");
+    });
+  });
+});
+
+describe("photo finish headlines", () => {
+  it("has at least 2 entries", () => {
+    expect(PHOTO_FINISH_HEADLINES.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("big is a non-empty string", () => {
+    PHOTO_FINISH_HEADLINES.forEach((h) => {
+      expect(h.big.length).toBeGreaterThan(0);
+    });
+  });
+
+  it("sub is callable and returns string with both player names", () => {
+    PHOTO_FINISH_HEADLINES.forEach((h) => {
+      const result = h.sub("Alice", "Bob", 42);
+      expect(result).toContain("Alice");
+      expect(result).toContain("Bob");
+    });
+  });
+});
+
+describe("round reaction emojis", () => {
+  it("has exactly 5 emojis", () => {
+    expect(ROUND_REACTION_EMOJIS).toHaveLength(5);
+  });
+
+  it("all entries are non-empty strings", () => {
+    ROUND_REACTION_EMOJIS.forEach((e) => {
+      expect(e.length).toBeGreaterThan(0);
+    });
   });
 });

@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/firebase";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(
   request: Request,
   { params }: { params: { roomId: string } }
 ) {
   try {
-    const db = getDb();
     const body = await request.json();
     const { uid } = body;
 
@@ -15,14 +14,14 @@ export async function POST(
       return NextResponse.json({ error: "uid required" }, { status: 400 });
     }
 
-    const roomRef = doc(db, "rooms", params.roomId);
-    const roomSnap = await getDoc(roomRef);
+    const roomRef = adminDb.collection("rooms").doc(params.roomId);
+    const roomSnap = await roomRef.get();
 
-    if (!roomSnap.exists()) {
+    if (!roomSnap.exists) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    const room = roomSnap.data();
+    const room = roomSnap.data()!;
 
     if (room.hostSessionId !== uid) {
       return NextResponse.json(
@@ -38,9 +37,12 @@ export async function POST(
       );
     }
 
-    await updateDoc(roomRef, {
+    await roomRef.update({
       status: "playing",
-      startedAt: serverTimestamp(),
+      currentRound: 1,
+      roundPhase: "question",
+      roundStartedAt: FieldValue.serverTimestamp(),
+      startedAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json({ success: true, seed: room.seed });

@@ -63,7 +63,8 @@ test.describe("Emoji mode toggle", () => {
       .filter({ hasText: "Emoji" });
     await emojiToggle.click();
 
-    // Start the game
+    // Navigate through ModeSelect to solo, then start game
+    await page.getByRole("button", { name: /Solo Training/i }).click();
     await page.locator(".btnp").click();
 
     // Answer options should still be English text headlines (not emoji)
@@ -82,7 +83,8 @@ test.describe("Emoji mode toggle", () => {
       .filter({ hasText: "Emoji" });
     await emojiToggle.click();
 
-    // Start game
+    // Navigate through ModeSelect to solo, then start game
+    await page.getByRole("button", { name: /Solo Training/i }).click();
     await page.locator(".btnp").click();
 
     // Masthead should still be in emoji mode

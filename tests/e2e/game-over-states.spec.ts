@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
 
+async function goToSolo(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Solo Training/i }).click();
+}
+
 test.describe("Game over states", () => {
   test("loss shows score, rank, and restart button", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Wrong answer on round 1
@@ -20,7 +25,7 @@ test.describe("Game over states", () => {
   test("loss shows correct headline and wrong answer in review", async ({
     page,
   }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Get the wrong option text before clicking
@@ -44,7 +49,7 @@ test.describe("Game over states", () => {
   });
 
   test("loss at higher round shows correct rank", async ({ page }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Answer 6 rounds correctly (gets to JUNIOR ASSOCIATE)
@@ -61,7 +66,7 @@ test.describe("Game over states", () => {
 
   test("win state after 50 correct answers", async ({ page }) => {
     test.setTimeout(120000); // This test takes a while
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Answer all 50 rounds correctly
@@ -94,7 +99,7 @@ test.describe("Game over states", () => {
   test("progress bar width corresponds to rounds completed", async ({
     page,
   }) => {
-    await page.goto("/");
+    await goToSolo(page);
     await page.locator(".btnp").click();
 
     // Answer 1 wrong
