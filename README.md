@@ -14,39 +14,109 @@ Press or click 1–4 to answer. One mistake and it's game over.
 
 ## Features
 
-- Single-file HTML/CSS/JS — no build tools, no dependencies
 - Prestige newspaper parody aesthetic (Playfair Display, Libre Baskerville, Space Mono)
 - Employee badge with randomized fake names
 - Progressive difficulty: more same-category distractors + countdown timer at higher rounds
-- Employee advancement ranks: Intern → Junior Associate → Mid-Level Translator → Senior Emoji Correspondent → VP of Translation → Chief Emoji Officer
-- Emoji Mode (BETA): toggle all newspaper chrome to emoji equivalents via the masthead language switcher
+- Employee advancement ranks: Intern → Chief Emoji Officer
+- Emoji Mode (BETA): toggle all newspaper chrome to emoji equivalents
 - Fake stock ticker, satirical dispatches, absurd advertisements
+- **Multiplayer** — Real-time competitive mode with shared rooms, seeded question sync, and live scoreboards
 - Keyboard and click support
 - Responsive layout
 
-## Running Locally
-
-Serve the file with any static server:
-
-```bash
-# Python
-python3 -m http.server 8765
-
-# Ruby
-ruby -run -e httpd . -p 8765
-
-# Node
-npx serve -p 8765
-```
-
-Then open `http://localhost:8765/clickmoji.html`.
-
 ## Stack
 
-- **HTML/CSS/JS** — single file, zero dependencies
+- **Next.js 14** (App Router) + TypeScript
+- **Tailwind CSS** + CSS custom properties (newspaper aesthetic)
+- **Firebase Firestore** — real-time rooms + leaderboard
+- **Firebase Anonymous Auth** — frictionless session identity
 - **Google Fonts** — Playfair Display, Libre Baskerville, Space Mono
-- 80 headlines across 8 categories, each with hand-crafted emoji translations
+- 100+ headlines across 8 categories, each with hand-crafted emoji translations
 
-## Next Steps
+## Setup
 
-- **Multiplayer** — Real-time competitive mode where players race to match the same emoji sequences. Shared lobby with live scoreboards, streak tracking, and a "Breaking News" ticker announcing top plays. Could use WebSockets or WebRTC for peer-to-peer matches.
+### Prerequisites
+
+- Node.js 18+
+- A Firebase project (free Spark plan works)
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Firebase
+
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Enable **Anonymous Authentication** in Firebase Auth
+3. Create a **Firestore Database**
+4. Copy `.env.local.example` to `.env.local` and fill in your Firebase config:
+
+```bash
+cp .env.local.example .env.local
+```
+
+### 3. Deploy Firestore rules
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+### 4. Run locally
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Deploy to Vercel
+
+```bash
+npx vercel
+```
+
+Set the same `NEXT_PUBLIC_FIREBASE_*` environment variables in your Vercel project settings.
+
+## Testing
+
+```bash
+# Unit tests
+npm test
+
+# Unit tests in watch mode
+npm run test:watch
+
+# E2E tests (auto-starts dev server)
+npm run test:e2e
+
+# E2E tests with Playwright UI
+npm run test:e2e:ui
+
+# TypeScript type checking
+npm run typecheck
+```
+
+Pre-commit hooks (Husky + lint-staged) automatically run ESLint on staged files.
+
+## Project Structure
+
+```
+app/                     # Next.js App Router pages
+  page.tsx               # Home (solo game)
+  lobby/page.tsx         # Multiplayer lobby
+  room/[roomId]/page.tsx # Multiplayer game room
+  api/                   # API routes (rooms, scores)
+components/
+  game/                  # Solo game components (state machine)
+  newspaper/             # Newspaper chrome (masthead, ticker, ads, columns)
+  multiplayer/           # Multiplayer UI (lobby, waiting room, live game)
+lib/
+  game-data.ts           # All content arrays
+  game-logic.ts          # Difficulty scaling, seeded PRNG, question picker
+  firebase.ts            # Firebase client config
+  emoji-react.ts         # Floating emoji + confetti effects
+types/
+  game.ts                # TypeScript interfaces
+```

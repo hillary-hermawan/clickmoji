@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Rooms: readable by all, writable only by server (API routes)
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow write: if false; // Server-side only via Admin SDK
+
+      // Players: each player can write their own doc
+      match /players/{uid} {
+        allow read: if true;
+        allow create: if request.auth != null && request.auth.uid == uid;
+        allow update: if request.auth != null && request.auth.uid == uid;
+        allow delete: if false;
+      }
+    }
+
+    // Scores: anyone can write (append-only), anyone can read
+    match /scores/{scoreId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+  }
+}
